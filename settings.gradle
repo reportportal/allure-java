@@ -14,16 +14,4 @@
  * limitations under the License.
  */
 
-allprojects {
-    repositories {
-        mavenCentral()
-        maven { url "https://jitpack.io" }
-    }
-
-    dependencies {
-
-    }
-}
-
-dependencies {
-}
+include 'agent-allure-testng'

@@ -14,16 +14,22 @@
  * limitations under the License.
  */
 
-allprojects {
-    repositories {
-        mavenCentral()
-        maven { url "https://jitpack.io" }
-    }
+package com.epam.reportportal.testng;
 
-    dependencies {
+import com.epam.reportportal.service.Launch;
 
-    }
-}
+import java.util.function.Supplier;
 
-dependencies {
+public class AllureAwareTestNGService extends TestNGService {
+
+
+	public AllureAwareTestNGService() {
+		super();
+	}
+
+	public AllureAwareTestNGService(Supplier<Launch> launchSupplier) {
+		super(launchSupplier);
+	}
+
+
 }

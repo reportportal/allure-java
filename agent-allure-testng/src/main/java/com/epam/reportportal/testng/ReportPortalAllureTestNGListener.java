@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-allprojects {
-    repositories {
-        mavenCentral()
-        maven { url "https://jitpack.io" }
-    }
+package com.epam.reportportal.testng;
 
-    dependencies {
+import com.epam.reportportal.utils.MemoizingSupplier;
 
-    }
-}
+import java.util.function.Supplier;
 
-dependencies {
+public class ReportPortalAllureTestNGListener extends BaseTestNGListener {
+
+	public static final Supplier<ITestNGService> SERVICE = new MemoizingSupplier<>(AllureAwareTestNGService::new);
+
+	public ReportPortalAllureTestNGListener() {
+		super(SERVICE.get());
+	}
 }
