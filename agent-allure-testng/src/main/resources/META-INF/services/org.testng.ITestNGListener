@@ -1,1 +1,1 @@
-com.epam.reportportal.testng.AllureAwareTestNGService
+com.epam.reportportal.testng.AllureAwareListener

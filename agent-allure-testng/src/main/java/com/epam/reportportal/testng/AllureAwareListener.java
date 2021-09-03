@@ -20,11 +20,10 @@ import com.epam.reportportal.utils.MemoizingSupplier;
 
 import java.util.function.Supplier;
 
-public class ReportPortalAllureTestNGListener extends BaseTestNGListener {
+public class AllureAwareListener extends BaseTestNGListener {
+	public static final Supplier<ITestNGService> SERVICE = new MemoizingSupplier<>(AllureAwareService::new);
 
-	public static final Supplier<ITestNGService> SERVICE = new MemoizingSupplier<>(AllureAwareTestNGService::new);
-
-	public ReportPortalAllureTestNGListener() {
+	public AllureAwareListener() {
 		super(SERVICE.get());
 	}
 }

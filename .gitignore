@@ -34,3 +34,4 @@ build/
 *.iml
 /bin/
 /out
+**/test-output/

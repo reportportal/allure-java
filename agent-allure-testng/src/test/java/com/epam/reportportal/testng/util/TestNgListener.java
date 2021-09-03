@@ -14,22 +14,16 @@
  * limitations under the License.
  */
 
-package com.epam.reportportal.testng;
+package com.epam.reportportal.testng.util;
 
-import com.epam.reportportal.service.Launch;
+import com.epam.reportportal.service.ReportPortal;
+import com.epam.reportportal.testng.AllureAwareService;
+import com.epam.reportportal.testng.BaseTestNGListener;
 
-import java.util.function.Supplier;
+public class TestNgListener extends BaseTestNGListener {
+	public static final ThreadLocal<ReportPortal> REPORT_PORTAL_THREAD_LOCAL = new ThreadLocal<>();
 
-public class AllureAwareTestNGService extends TestNGService {
-
-
-	public AllureAwareTestNGService() {
-		super();
+	public TestNgListener() {
+		super(new AllureAwareService(REPORT_PORTAL_THREAD_LOCAL.get()));
 	}
-
-	public AllureAwareTestNGService(Supplier<Launch> launchSupplier) {
-		super(launchSupplier);
-	}
-
-
 }
