@@ -16,6 +16,8 @@
 
 dependencies {
     api 'com.epam.reportportal:agent-java-testng:5.1.0-RC-2'
+
+    implementation project(":allure-common")
 }
 
 test {

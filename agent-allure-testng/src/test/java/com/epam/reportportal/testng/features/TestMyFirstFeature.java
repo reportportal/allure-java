@@ -7,6 +7,7 @@ import org.testng.annotations.Test;
 
 import static io.qameta.allure.Allure.step;
 
+@Link("https://example.com/class")
 @Feature("My feature")
 public class TestMyFirstFeature {
 

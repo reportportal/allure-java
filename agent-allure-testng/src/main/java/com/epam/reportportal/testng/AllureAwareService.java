@@ -18,23 +18,22 @@ package com.epam.reportportal.testng;
 
 import com.epam.reportportal.service.ReportPortal;
 import com.epam.ta.reportportal.ws.model.StartTestItemRQ;
-import io.qameta.allure.util.AnnotationUtils;
 import org.testng.ITestContext;
 import org.testng.ITestNGMethod;
 import org.testng.ITestResult;
 import org.testng.internal.ConstructorOrMethod;
+import org.testng.xml.XmlTest;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.Method;
 import java.util.Optional;
 
+import static com.epam.reportportal.allure.AnnotationUtils.processLabels;
+import static com.epam.reportportal.allure.AnnotationUtils.processLinks;
 import static java.util.Optional.ofNullable;
 
 public class AllureAwareService extends TestNGService {
-
-	public static final String MARKDOWN_DELIMITER = "\n\n---\n\n";
-	public static final String LINK_MARKDOWN = "[%s](%s)";
 
 	public AllureAwareService() {
 		super();
@@ -45,29 +44,39 @@ public class AllureAwareService extends TestNGService {
 	}
 
 	@Override
+	@Nonnull
 	protected StartTestItemRQ buildStartTestItemRq(ITestContext testContext) {
 		StartTestItemRQ rq = super.buildStartTestItemRq(testContext);
+		ofNullable(testContext.getCurrentXmlTest()).map(XmlTest::getClasses).ifPresent(xmlClasses -> xmlClasses.forEach(c -> {
+			processLabels(rq, c.getSupportClass());
+			processLinks(rq, c.getSupportClass());
+		}));
 		return rq;
 	}
 
 	@Nonnull
 	private Optional<Method> getMethod(@Nullable final ITestNGMethod method) {
-		return Optional.ofNullable(method).map(ITestNGMethod::getConstructorOrMethod).map(ConstructorOrMethod::getMethod);
+		return ofNullable(method).map(ITestNGMethod::getConstructorOrMethod).map(ConstructorOrMethod::getMethod);
 	}
 
+	@Override
+	@Nonnull
+	protected StartTestItemRQ buildStartConfigurationRq(@Nonnull ITestResult testResult, @Nullable TestMethodType type) {
+		StartTestItemRQ rq = super.buildStartConfigurationRq(testResult, type);
+		getMethod(testResult.getMethod()).ifPresent(m -> {
+			processLabels(rq, m);
+			processLinks(rq, m);
+		});
+		return rq;
+	}
+
+	@Override
+	@Nonnull
 	protected StartTestItemRQ buildStartStepRq(final @Nonnull ITestResult testResult, final @Nonnull TestMethodType type) {
 		StartTestItemRQ rq = super.buildStartStepRq(testResult, type);
-		getMethod(testResult.getMethod()).map(AnnotationUtils::getLinks).filter(l -> !l.isEmpty()).ifPresent(links -> {
-			StringBuilder builder = ofNullable(rq.getDescription()).filter(d -> !d.isEmpty()).map(d -> {
-				StringBuilder sb = new StringBuilder(d);
-				sb.append(MARKDOWN_DELIMITER);
-				return sb;
-			}).orElseGet(StringBuilder::new);
-			builder.append("Links:\n");
-			links.forEach(l -> builder.append(l.getUrl() == null ?
-					String.format(LINK_MARKDOWN, l.getName(), l.getName()) :
-					String.format(LINK_MARKDOWN, l.getName(), l.getUrl())).append("\n"));
-			rq.setDescription(builder.toString());
+		getMethod(testResult.getMethod()).ifPresent(m -> {
+			processLabels(rq, m);
+			processLinks(rq, m);
 		});
 		return rq;
 	}

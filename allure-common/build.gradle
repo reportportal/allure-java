@@ -14,5 +14,18 @@
  * limitations under the License.
  */
 
-include 'allure-common'
-include 'agent-allure-testng'
+dependencies {
+    api 'com.epam.reportportal:commons-model:5.0.0'
+    api 'com.google.code.findbugs:jsr305:3.0.2'
+}
+
+test {
+    useJUnitPlatform()
+    outputs.upToDateWhen { false }
+    maxParallelForks(5) // it's forks - separate JVMs, should not interfere each other
+    doFirst {
+        def weaver = configurations.testRuntimeClasspath.find { it.name.contains("aspectjweaver") }
+        jvmArgs += "-javaagent:$weaver"
+    }
+    environment "AGENT_NO_ANALYTICS", "1"
+}

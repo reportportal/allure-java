@@ -16,6 +16,7 @@
 
 package com.epam.reportportal.testng;
 
+import com.epam.reportportal.allure.AnnotationUtils;
 import com.epam.reportportal.service.ReportPortal;
 import com.epam.reportportal.service.ReportPortalClient;
 import com.epam.reportportal.testng.features.TestMyFirstFeature;
@@ -25,14 +26,18 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.epam.reportportal.testng.util.TestUtils.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.same;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 public class LinkAnnotationTest {
 
@@ -55,13 +60,23 @@ public class LinkAnnotationTest {
 
 		verify(client).startLaunch(any()); // Start launch
 		verify(client).startTestItem(any());  // Start parent suites
-		verify(client).startTestItem(same(suitedUuid), any()); // Start test class
 		ArgumentCaptor<StartTestItemRQ> startTestCapture = ArgumentCaptor.forClass(StartTestItemRQ.class);
-		verify(client).startTestItem(same(testClassUuid), startTestCapture.capture()); // Start test step
+		verify(client).startTestItem(same(suitedUuid), startTestCapture.capture()); // Start test class
+		ArgumentCaptor<StartTestItemRQ> startMethodCapture = ArgumentCaptor.forClass(StartTestItemRQ.class);
+		verify(client).startTestItem(same(testClassUuid), startMethodCapture.capture()); // Start test step
 
 		StartTestItemRQ startItem = startTestCapture.getValue();
+		List<StartTestItemRQ> items = Arrays.asList(startItem, startMethodCapture.getValue());
 
-		assertThat(startItem.getDescription(), allOf(not(emptyOrNullString())));
+		AtomicInteger counter = new AtomicInteger();
+		items.forEach(i -> {
+			String description = i.getDescription();
+			assertThat(description, allOf(not(emptyOrNullString()), startsWith(AnnotationUtils.LINK_PREFIX)));
+			List<String> links = Arrays.asList(description.substring(
+					description.indexOf(AnnotationUtils.LINK_PREFIX) + AnnotationUtils.LINK_PREFIX.length()).split("\n"));
+			assertThat(links, hasSize(counter.incrementAndGet()));
+
+			links.forEach(l -> assertThat(l, containsString("(https://example.com")));
+		});
 	}
-
 }
