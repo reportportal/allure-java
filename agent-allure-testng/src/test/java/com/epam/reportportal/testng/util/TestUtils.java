@@ -170,7 +170,8 @@ public class TestUtils {
 			Maybe<ItemCreatedRS>[] other = responses.subList(1, responses.size()).toArray(new Maybe[0]);
 			when(client.startTestItem(same(k), any())).thenReturn(first, other);
 		});
-		parentNestedPairs.forEach(p -> when(client.finishTestItem(same(p.getValue()),
+		parentNestedPairs.forEach(p -> when(client.finishTestItem(
+				same(p.getValue()),
 				any()
 		)).thenAnswer((Answer<Maybe<OperationCompletionRS>>) invocation -> TestUtils.createMaybe(new OperationCompletionRS())));
 	}

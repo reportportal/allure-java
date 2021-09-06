@@ -20,4 +20,3 @@ public class TestMyFirstFeature {
 		step("step 2");
 	}
 }
-
