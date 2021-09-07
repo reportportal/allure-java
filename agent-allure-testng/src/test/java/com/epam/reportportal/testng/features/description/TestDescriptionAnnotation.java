@@ -14,19 +14,15 @@
  * limitations under the License.
  */
 
-package com.epam.reportportal.testng.features.allureid;
+package com.epam.reportportal.testng.features.description;
 
-import io.qameta.allure.AllureId;
-import io.qameta.allure.Feature;
-import io.qameta.allure.Story;
+import io.qameta.allure.Description;
 import org.testng.annotations.Test;
 
-@Feature("My feature")
-public class TestAllureIdNoParams {
+public class TestDescriptionAnnotation {
 
 	@Test
-	@Story("My story 1")
-	@AllureId("My no params ID")
+	@Description("My test description")
 	public void simpleTest1() {
 	}
 }

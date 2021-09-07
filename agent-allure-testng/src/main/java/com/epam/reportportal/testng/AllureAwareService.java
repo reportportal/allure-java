@@ -65,6 +65,7 @@ public class AllureAwareService extends TestNGService {
 		getMethod(testResult.getMethod()).ifPresent(m -> {
 			processLabels(rq, m);
 			processLinks(rq, m);
+			processDescription(rq, Thread.currentThread().getContextClassLoader(), m);
 		});
 		return rq;
 	}
@@ -77,6 +78,7 @@ public class AllureAwareService extends TestNGService {
 			processLabels(rq, m);
 			processLinks(rq, m);
 			processAllureId(rq, m);
+			processDescription(rq, Thread.currentThread().getContextClassLoader(), m);
 		});
 		return rq;
 	}

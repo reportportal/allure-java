@@ -25,8 +25,6 @@ import org.testng.annotations.Test;
 import java.util.Collections;
 import java.util.Iterator;
 
-import static io.qameta.allure.Allure.step;
-
 @Feature("My feature")
 public class TestAllureIdParams {
 
@@ -39,6 +37,6 @@ public class TestAllureIdParams {
 	@Story("My story 1")
 	@AllureId("My ID")
 	public void simpleTest1(String stepName) {
-		step(String.format("step '%s'", stepName));
+		System.out.printf("step '%s'%n", stepName);
 	}
 }

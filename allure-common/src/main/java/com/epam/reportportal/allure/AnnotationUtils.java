@@ -22,15 +22,18 @@ import com.epam.reportportal.utils.TestCaseIdUtils;
 import com.epam.ta.reportportal.ws.model.ParameterResource;
 import com.epam.ta.reportportal.ws.model.StartTestItemRQ;
 import com.epam.ta.reportportal.ws.model.attribute.ItemAttributesRQ;
+import io.qameta.allure.Description;
 import io.qameta.allure.util.ResultsUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
 
 public class AnnotationUtils {
@@ -62,12 +65,31 @@ public class AnnotationUtils {
 	}
 
 	public static void processAllureId(@Nonnull StartTestItemRQ rq, @Nullable AnnotatedElement source) {
-		rq.getAttributes().stream().filter(a -> ResultsUtils.ALLURE_ID_LABEL_NAME.equals(a.getKey())).findAny().ifPresent(id -> {
+		ofNullable(rq.getAttributes()).flatMap(attributes -> attributes.stream()
+				.filter(a -> ResultsUtils.ALLURE_ID_LABEL_NAME.equals(a.getKey()))
+				.findAny()).ifPresent(id -> {
 			if (ofNullable(source).map(s -> s.getAnnotation(TestCaseId.class)).isEmpty()) {
-				rq.setTestCaseId(ofNullable(TestCaseIdUtils.getTestCaseId(id.getValue(),
-						ofNullable(rq.getParameters()).map(params->params.stream().map(ParameterResource::getValue).collect(Collectors.toList())).orElse(null)
+				rq.setTestCaseId(ofNullable(TestCaseIdUtils.getTestCaseId(
+						id.getValue(),
+						ofNullable(rq.getParameters()).map(params -> params.stream()
+								.map(ParameterResource::getValue)
+								.collect(Collectors.toList())).orElse(null)
 				)).map(TestCaseIdEntry::getId).orElse(null));
 			}
 		});
+	}
+
+	public static void processDescription(@Nonnull StartTestItemRQ rq, @Nonnull ClassLoader classLoader, @Nullable Method source) {
+		ofNullable(source).map(s -> s.getAnnotation(Description.class)).flatMap(annotation -> {
+			if (annotation.useJavaDoc()) {
+				return ResultsUtils.getJavadocDescription(classLoader, source);
+			} else {
+				return of(annotation.value()).filter(d -> !d.isEmpty());
+			}
+		}).map(description -> ofNullable(rq.getDescription()).filter(d -> !d.isEmpty()).map(d -> {
+			StringBuilder sb = new StringBuilder(d);
+			sb.append(MARKDOWN_DELIMITER);
+			return sb;
+		}).orElseGet(StringBuilder::new).append(description).toString()).ifPresent(rq::setDescription);
 	}
 }
