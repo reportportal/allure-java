@@ -16,14 +16,20 @@
 
 package com.epam.reportportal.allure;
 
+import com.epam.reportportal.annotations.TestCaseId;
+import com.epam.reportportal.service.item.TestCaseIdEntry;
+import com.epam.reportportal.utils.TestCaseIdUtils;
+import com.epam.ta.reportportal.ws.model.ParameterResource;
 import com.epam.ta.reportportal.ws.model.StartTestItemRQ;
 import com.epam.ta.reportportal.ws.model.attribute.ItemAttributesRQ;
+import io.qameta.allure.util.ResultsUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.AnnotatedElement;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static java.util.Optional.ofNullable;
 
@@ -52,6 +58,16 @@ public class AnnotationUtils {
 			Set<ItemAttributesRQ> attributes = ofNullable(rq.getAttributes()).map(HashSet::new).orElseGet(HashSet::new);
 			rq.setAttributes(attributes);
 			labels.forEach(l -> attributes.add(new ItemAttributesRQ(l.getName(), l.getValue())));
+		});
+	}
+
+	public static void processAllureId(@Nonnull StartTestItemRQ rq, @Nullable AnnotatedElement source) {
+		rq.getAttributes().stream().filter(a -> ResultsUtils.ALLURE_ID_LABEL_NAME.equals(a.getKey())).findAny().ifPresent(id -> {
+			if (ofNullable(source).map(s -> s.getAnnotation(TestCaseId.class)).isEmpty()) {
+				rq.setTestCaseId(ofNullable(TestCaseIdUtils.getTestCaseId(id.getValue(),
+						ofNullable(rq.getParameters()).map(params->params.stream().map(ParameterResource::getValue).collect(Collectors.toList())).orElse(null)
+				)).map(TestCaseIdEntry::getId).orElse(null));
+			}
 		});
 	}
 }

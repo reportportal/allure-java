@@ -29,8 +29,7 @@ import javax.annotation.Nullable;
 import java.lang.reflect.Method;
 import java.util.Optional;
 
-import static com.epam.reportportal.allure.AnnotationUtils.processLabels;
-import static com.epam.reportportal.allure.AnnotationUtils.processLinks;
+import static com.epam.reportportal.allure.AnnotationUtils.*;
 import static java.util.Optional.ofNullable;
 
 public class AllureAwareService extends TestNGService {
@@ -77,6 +76,7 @@ public class AllureAwareService extends TestNGService {
 		getMethod(testResult.getMethod()).ifPresent(m -> {
 			processLabels(rq, m);
 			processLinks(rq, m);
+			processAllureId(rq, m);
 		});
 		return rq;
 	}
