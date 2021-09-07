@@ -79,6 +79,7 @@ public class AllureAwareService extends TestNGService {
 			processLinks(rq, m);
 			processAllureId(rq, m);
 			processDescription(rq, Thread.currentThread().getContextClassLoader(), m);
+			processPriority(rq, m);
 		});
 		return rq;
 	}

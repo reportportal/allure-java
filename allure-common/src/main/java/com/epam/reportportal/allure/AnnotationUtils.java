@@ -23,6 +23,7 @@ import com.epam.ta.reportportal.ws.model.ParameterResource;
 import com.epam.ta.reportportal.ws.model.StartTestItemRQ;
 import com.epam.ta.reportportal.ws.model.attribute.ItemAttributesRQ;
 import io.qameta.allure.Description;
+import io.qameta.allure.Severity;
 import io.qameta.allure.util.ResultsUtils;
 
 import javax.annotation.Nonnull;
@@ -91,5 +92,19 @@ public class AnnotationUtils {
 			sb.append(MARKDOWN_DELIMITER);
 			return sb;
 		}).orElseGet(StringBuilder::new).append(description).toString()).ifPresent(rq::setDescription);
+	}
+
+	public static void processPriority(@Nonnull StartTestItemRQ rq, @Nullable Method source) {
+		ofNullable(source).ifPresent(s -> {
+			Severity annotation = ofNullable(s.getAnnotation(Severity.class)).orElseGet(() -> source.getDeclaringClass()
+					.getAnnotation(Severity.class));
+			if (annotation != null) {
+				// Allure don't know the difference between priority and severity (－‸ლ)
+				ItemAttributesRQ attribute = new ItemAttributesRQ("priority", annotation.value().value());
+				Set<ItemAttributesRQ> attributes = ofNullable(rq.getAttributes()).map(HashSet::new).orElseGet(HashSet::new);
+				rq.setAttributes(attributes);
+				attributes.add(attribute);
+			}
+		});
 	}
 }
