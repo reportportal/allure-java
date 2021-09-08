@@ -24,6 +24,7 @@ import com.epam.ta.reportportal.ws.model.StartTestItemRQ;
 import com.epam.ta.reportportal.ws.model.attribute.ItemAttributesRQ;
 import io.qameta.allure.Description;
 import io.qameta.allure.Flaky;
+import io.qameta.allure.Muted;
 import io.qameta.allure.Severity;
 import io.qameta.allure.util.ResultsUtils;
 
@@ -123,6 +124,16 @@ public class AnnotationUtils {
 				ItemAttributesRQ attribute = new ItemAttributesRQ(Flaky.class.getSimpleName().toLowerCase(Locale.ROOT));
 				Set<ItemAttributesRQ> attributes = retrieveAttributes(rq);
 				attributes.add(attribute);
+			}
+		});
+	}
+
+	public static void processMuted(@Nonnull StartTestItemRQ rq, @Nullable Method source) {
+		ofNullable(source).ifPresent(s -> {
+			Muted annotation = ofNullable(s.getAnnotation(Muted.class)).orElseGet(() -> source.getDeclaringClass()
+					.getAnnotation(Muted.class));
+			if (annotation != null) {
+				rq.setHasStats(false);
 			}
 		});
 	}

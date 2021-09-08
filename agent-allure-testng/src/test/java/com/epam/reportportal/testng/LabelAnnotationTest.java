@@ -65,8 +65,7 @@ public class LabelAnnotationTest {
 
 		Set<ItemAttributesRQ> attributes = startTestCapture.getValue().getAttributes();
 		assertThat(attributes, hasSize(1));
-		assertThat(
-				attributes.iterator().next(),
+		assertThat(attributes.iterator().next(),
 				allOf(hasProperty("key", equalTo("feature")), hasProperty("value", equalTo("My feature")))
 		);
 

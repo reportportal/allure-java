@@ -18,72 +18,73 @@ package com.epam.reportportal.testng;
 
 import com.epam.reportportal.service.ReportPortal;
 import com.epam.reportportal.service.ReportPortalClient;
-import com.epam.reportportal.testng.features.flaky.TestFlakyClassLevel;
-import com.epam.reportportal.testng.features.flaky.TestFlakyMethodLevel;
 import com.epam.reportportal.testng.util.TestNgListener;
 import com.epam.ta.reportportal.ws.model.StartTestItemRQ;
-import com.epam.ta.reportportal.ws.model.attribute.ItemAttributesRQ;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.epam.reportportal.testng.util.TestUtils.*;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.same;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
-public class FlakyAnnotationTest {
+public class MutedAnnotationTest {
 
 	private final String suitedUuid = namedUuid("suite_");
 	private final String testClassUuid = namedUuid("class_");
-	private final String stepUuid = namedUuid("test_");
+	private final List<String> stepUuids = Stream.generate(() -> namedUuid("step_")).limit(3).collect(Collectors.toList());
 
 	private final ReportPortalClient client = mock(ReportPortalClient.class);
 
 	@BeforeEach
 	public void initMocks() {
-		mockLaunch(client, namedUuid("launchUuid"), suitedUuid, testClassUuid, stepUuid);
+		mockLaunch(client, namedUuid("launchUuid"), suitedUuid, testClassUuid, stepUuids);
 		ReportPortal reportPortal = ReportPortal.create(client, standardParameters());
 		TestNgListener.REPORT_PORTAL_THREAD_LOCAL.set(reportPortal);
 	}
 
 	@Test
-	public void test_flaky_annotation_method_level_processing() {
-		runTests(Collections.singletonList(TestNgListener.class), TestFlakyMethodLevel.class);
+	public void test_muted_annotation_method_level_processing() {
+		runTests(Collections.singletonList(TestNgListener.class), "muted_method_tests.xml");
 
 		verify(client).startLaunch(any()); // Start launch
 		verify(client).startTestItem(any());  // Start parent suites
 		verify(client).startTestItem(same(suitedUuid), any()); // Start test class
 		ArgumentCaptor<StartTestItemRQ> startMethodCapture = ArgumentCaptor.forClass(StartTestItemRQ.class);
-		verify(client).startTestItem(same(testClassUuid), startMethodCapture.capture()); // Start test step
+		verify(client, times(2)).startTestItem(same(testClassUuid), startMethodCapture.capture()); // Start test step
 
-		StartTestItemRQ startMethod = startMethodCapture.getValue();
-		Set<ItemAttributesRQ> attributes = startMethod.getAttributes();
-		List<ItemAttributesRQ> flakyAttributes = attributes.stream().filter(a -> "flaky".equals(a.getValue())).collect(Collectors.toList());
-		assertThat(flakyAttributes, hasSize(1));
+		List<StartTestItemRQ> startMethods = startMethodCapture.getAllValues()
+				.stream()
+				.filter(rq -> rq.getName().contains("muted"))
+				.collect(Collectors.toList());
+		assertThat(startMethods, hasSize(1));
+		assertThat(startMethods.get(0).isHasStats(), equalTo(Boolean.FALSE));
 	}
 
 	@Test
-	public void test_flaky_annotation_class_level_processing() {
-		runTests(Collections.singletonList(TestNgListener.class), TestFlakyClassLevel.class);
+	public void test_muted_annotation_class_level_processing() {
+		runTests(Collections.singletonList(TestNgListener.class), "muted_class_tests.xml");
 
 		verify(client).startLaunch(any()); // Start launch
 		verify(client).startTestItem(any());  // Start parent suites
 		verify(client).startTestItem(same(suitedUuid), any()); // Start test class
 		ArgumentCaptor<StartTestItemRQ> startMethodCapture = ArgumentCaptor.forClass(StartTestItemRQ.class);
-		verify(client).startTestItem(same(testClassUuid), startMethodCapture.capture()); // Start test step
+		verify(client, times(2)).startTestItem(same(testClassUuid), startMethodCapture.capture()); // Start test step
 
-		StartTestItemRQ startMethod = startMethodCapture.getValue();
-		Set<ItemAttributesRQ> attributes = startMethod.getAttributes();
-		List<ItemAttributesRQ> flakyAttributes = attributes.stream().filter(a -> "flaky".equals(a.getValue())).collect(Collectors.toList());
-		assertThat(flakyAttributes, hasSize(1));
+		List<StartTestItemRQ> startMethods = startMethodCapture.getAllValues()
+				.stream()
+				.filter(rq -> rq.getName().contains("muted"))
+				.collect(Collectors.toList());
+		assertThat(startMethods, hasSize(1));
+		assertThat(startMethods.get(0).isHasStats(), equalTo(Boolean.FALSE));
 	}
 }

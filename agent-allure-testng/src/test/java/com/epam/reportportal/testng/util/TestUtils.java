@@ -1,9 +1,7 @@
 package com.epam.reportportal.testng.util;
 
 import com.epam.reportportal.listeners.ListenerParameters;
-import com.epam.reportportal.service.Launch;
 import com.epam.reportportal.service.ReportPortalClient;
-import com.epam.reportportal.service.step.StepReporter;
 import com.epam.reportportal.util.test.CommonUtils;
 import com.epam.ta.reportportal.ws.model.OperationCompletionRS;
 import com.epam.ta.reportportal.ws.model.StartTestItemRQ;
@@ -21,6 +19,7 @@ import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
+import static java.util.Optional.ofNullable;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
@@ -34,12 +33,26 @@ public class TestUtils {
 	// 10 milliseconds is enough to separate one test from another
 	public static final long MINIMAL_TEST_PAUSE = 20L;
 
-	public static TestNG runTests(List<Class<? extends ITestNGListener>> listeners, Class<?>... classes) {
-		final TestNG testNG = new TestNG(true);
+	private static TestNG getTestNg(List<Class<? extends ITestNGListener>> listeners) {
+		TestNG testNG = new TestNG(true);
 		testNG.setListenerClasses(listeners);
-		testNG.setTestClasses(classes);
 		testNG.setDefaultTestName(TEST_NAME);
 		testNG.setExcludedGroups("optional");
+		return testNG;
+	}
+
+	public static TestNG runTests(List<Class<? extends ITestNGListener>> listeners, Class<?>... classes) {
+		final TestNG testNG = getTestNg(listeners);
+		testNG.setTestClasses(classes);
+		testNG.run();
+		return testNG;
+	}
+
+	public static TestNG runTests(List<Class<? extends ITestNGListener>> listeners, String xmlPath) {
+		final TestNG testNG = getTestNg(listeners);
+		ofNullable(Thread.currentThread()
+				.getContextClassLoader()
+				.getResource(xmlPath)).ifPresent(uri -> testNG.setTestSuites(Collections.singletonList(uri.toString())));
 		testNG.run();
 		return testNG;
 	}
@@ -85,34 +98,6 @@ public class TestUtils {
 		rq.setUniqueId(id);
 		rq.setType("STEP");
 		return rq;
-	}
-
-	public static void mockLaunch(Launch launch, StepReporter reporter, Maybe<String> launchUuid, Maybe<String> suiteUuid,
-			Maybe<String> testClassUuid, Collection<Maybe<String>> testMethodUuidList) {
-		mockLaunch(launch, standardParameters(), reporter, launchUuid, suiteUuid, testClassUuid, testMethodUuidList);
-	}
-
-	@SuppressWarnings("unchecked")
-	public static void mockLaunch(Launch launch, ListenerParameters parameters, StepReporter reporter, Maybe<String> launchUuid,
-			Maybe<String> suiteUuid, Maybe<String> testClassUuid, Collection<Maybe<String>> testMethodUuidList) {
-		when(launch.getParameters()).thenReturn(parameters);
-		when(launch.getStepReporter()).thenReturn(reporter);
-
-		when(launch.start()).thenReturn(launchUuid);
-		when(launch.startTestItem(any())).thenReturn(suiteUuid);
-		when(launch.startTestItem(same(suiteUuid), any())).thenReturn(testClassUuid);
-
-		Iterator<Maybe<String>> methodIterator = testMethodUuidList.iterator();
-		Maybe<String> first = methodIterator.next();
-		List<Maybe<String>> methodMaybes = new ArrayList<>();
-		methodIterator.forEachRemaining(methodMaybes::add);
-		Maybe<String>[] other = methodMaybes.toArray(new Maybe[0]);
-		when(launch.startTestItem(same(testClassUuid), any())).thenReturn(first, other);
-
-		new HashSet<>(testMethodUuidList).forEach(methodUuidMaybe -> when(launch.finishTestItem(same(methodUuidMaybe), any())).thenReturn(
-				TestUtils.createMaybe(new OperationCompletionRS())));
-		when(launch.finishTestItem(same(testClassUuid), any())).thenReturn(TestUtils.createMaybe(new OperationCompletionRS()));
-		when(launch.finishTestItem(same(suiteUuid), any())).thenReturn(TestUtils.createMaybe(new OperationCompletionRS()));
 	}
 
 	public static void mockLaunch(ReportPortalClient client, String launchUuid, String suiteUuid, String testClassUuid,

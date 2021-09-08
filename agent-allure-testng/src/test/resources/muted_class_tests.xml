@@ -1,0 +1,9 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Muted Tests">
+    <test verbose="1" name="Muted method">
+        <classes>
+            <class name="com.epam.reportportal.testng.features.muted.TestMutedClassLevel"/>
+            <class name="com.epam.reportportal.testng.features.muted.TestMutedNoMuted"/>
+        </classes>
+    </test>
+</suite>

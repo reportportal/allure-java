@@ -81,6 +81,7 @@ public class AllureAwareService extends TestNGService {
 			processDescription(rq, Thread.currentThread().getContextClassLoader(), m);
 			processPriority(rq, m);
 			processFlaky(rq, m);
+			processMuted(rq, m);
 		});
 		return rq;
 	}
