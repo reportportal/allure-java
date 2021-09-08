@@ -31,7 +31,7 @@ subprojects {
             'line'       : 75,
             'complexity' : 60,
             'method'     : 65,
-            'class'      : 83
+            'class'      : 50
     ]
 
     sourceCompatibility = JavaVersion.VERSION_1_8
