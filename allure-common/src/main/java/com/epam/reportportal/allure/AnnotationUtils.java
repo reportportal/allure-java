@@ -23,6 +23,7 @@ import com.epam.ta.reportportal.ws.model.ParameterResource;
 import com.epam.ta.reportportal.ws.model.StartTestItemRQ;
 import com.epam.ta.reportportal.ws.model.attribute.ItemAttributesRQ;
 import io.qameta.allure.Description;
+import io.qameta.allure.Flaky;
 import io.qameta.allure.Severity;
 import io.qameta.allure.util.ResultsUtils;
 
@@ -31,6 +32,7 @@ import javax.annotation.Nullable;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -57,10 +59,16 @@ public class AnnotationUtils {
 		});
 	}
 
+	@Nonnull
+	private static Set<ItemAttributesRQ> retrieveAttributes(@Nonnull StartTestItemRQ rq) {
+		Set<ItemAttributesRQ> attributes = ofNullable(rq.getAttributes()).map(HashSet::new).orElseGet(HashSet::new);
+		rq.setAttributes(attributes);
+		return attributes;
+	}
+
 	public static void processLabels(@Nonnull StartTestItemRQ rq, @Nullable AnnotatedElement source) {
 		ofNullable(source).map(io.qameta.allure.util.AnnotationUtils::getLabels).filter(l -> !l.isEmpty()).ifPresent(labels -> {
-			Set<ItemAttributesRQ> attributes = ofNullable(rq.getAttributes()).map(HashSet::new).orElseGet(HashSet::new);
-			rq.setAttributes(attributes);
+			Set<ItemAttributesRQ> attributes = retrieveAttributes(rq);
 			labels.forEach(l -> attributes.add(new ItemAttributesRQ(l.getName(), l.getValue())));
 		});
 	}
@@ -101,8 +109,19 @@ public class AnnotationUtils {
 			if (annotation != null) {
 				// Allure don't know the difference between priority and severity (－‸ლ)
 				ItemAttributesRQ attribute = new ItemAttributesRQ("priority", annotation.value().value());
-				Set<ItemAttributesRQ> attributes = ofNullable(rq.getAttributes()).map(HashSet::new).orElseGet(HashSet::new);
-				rq.setAttributes(attributes);
+				Set<ItemAttributesRQ> attributes = retrieveAttributes(rq);
+				attributes.add(attribute);
+			}
+		});
+	}
+
+	public static void processFlaky(@Nonnull StartTestItemRQ rq, @Nullable Method source) {
+		ofNullable(source).ifPresent(s -> {
+			Flaky annotation = ofNullable(s.getAnnotation(Flaky.class)).orElseGet(() -> source.getDeclaringClass()
+					.getAnnotation(Flaky.class));
+			if (annotation != null) {
+				ItemAttributesRQ attribute = new ItemAttributesRQ(Flaky.class.getSimpleName().toLowerCase(Locale.ROOT));
+				Set<ItemAttributesRQ> attributes = retrieveAttributes(rq);
 				attributes.add(attribute);
 			}
 		});
