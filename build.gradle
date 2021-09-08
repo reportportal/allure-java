@@ -46,4 +46,6 @@ subprojects {
         testImplementation "org.mockito:mockito-core:${mockito_version}"
         testImplementation "org.mockito:mockito-junit-jupiter:${mockito_version}"
     }
+
+    build.dependsOn jacocoTestReport
 }
