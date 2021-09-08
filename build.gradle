@@ -23,6 +23,16 @@ allprojects {
 
 subprojects {
     apply plugin: 'java-library'
+    apply from: "${project.scripts_url}/${project.scripts_branch}/jacoco.gradle"
+
+    project.ext.limits = [
+            'instruction': 70,
+            'branch'     : 53,
+            'line'       : 75,
+            'complexity' : 60,
+            'method'     : 65,
+            'class'      : 83
+    ]
 
     dependencies {
         testImplementation 'com.github.reportportal:agent-java-test-utils:3d4d206'
