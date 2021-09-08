@@ -77,7 +77,7 @@ public class AnnotationUtils {
 		ofNullable(rq.getAttributes()).flatMap(attributes -> attributes.stream()
 				.filter(a -> ResultsUtils.ALLURE_ID_LABEL_NAME.equals(a.getKey()))
 				.findAny()).ifPresent(id -> {
-			if (ofNullable(source).map(s -> s.getAnnotation(TestCaseId.class)).isEmpty()) {
+			if (!ofNullable(source).map(s -> s.getAnnotation(TestCaseId.class)).isPresent()) {
 				rq.setTestCaseId(ofNullable(TestCaseIdUtils.getTestCaseId(
 						id.getValue(),
 						ofNullable(rq.getParameters()).map(params -> params.stream()
