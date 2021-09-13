@@ -18,7 +18,7 @@ dependencies {
     api 'com.epam.reportportal:commons-model:5.0.0'
     api 'com.google.code.findbugs:jsr305:3.0.2'
 
-    implementation 'com.epam.reportportal:client-java:5.1.0-RC-7'
+    implementation 'com.epam.reportportal:client-java:5.1.0-RC-8'
     implementation 'io.qameta.allure:allure-java-commons:2.14.0'
 }
 
