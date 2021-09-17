@@ -44,7 +44,7 @@ public class AllureAwareService extends TestNGService {
 
 	@Override
 	@Nonnull
-	protected StartTestItemRQ buildStartTestItemRq(ITestContext testContext) {
+	protected StartTestItemRQ buildStartTestItemRq(@Nonnull ITestContext testContext) {
 		StartTestItemRQ rq = super.buildStartTestItemRq(testContext);
 		ofNullable(testContext.getCurrentXmlTest()).map(XmlTest::getClasses).ifPresent(xmlClasses -> xmlClasses.forEach(c -> {
 			processLabels(rq, c.getSupportClass());

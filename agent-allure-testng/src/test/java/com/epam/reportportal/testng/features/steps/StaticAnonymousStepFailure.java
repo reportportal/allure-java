@@ -14,21 +14,20 @@
  * limitations under the License.
  */
 
-dependencies {
-    api 'com.epam.reportportal:commons-model:5.0.0'
-    api 'com.google.code.findbugs:jsr305:3.0.2'
-    api 'io.qameta.allure:allure-java-commons:2.14.0'
+package com.epam.reportportal.testng.features.steps;
 
-    implementation 'com.epam.reportportal:client-java:5.1.0-RC-12'
-}
+import org.junit.jupiter.api.Assertions;
+import org.testng.annotations.Test;
 
-test {
-    useJUnitPlatform()
-    outputs.upToDateWhen { false }
-    maxParallelForks(5) // it's forks - separate JVMs, should not interfere each other
-    doFirst {
-        def weaver = configurations.testRuntimeClasspath.find { it.name.contains("aspectjweaver") }
-        jvmArgs += "-javaagent:$weaver"
-    }
-    environment "AGENT_NO_ANALYTICS", "1"
+import static io.qameta.allure.Allure.step;
+
+public class StaticAnonymousStepFailure {
+	public static final String FAILURE_MESSAGE = StaticAnonymousStepFailure.class.getSimpleName() + " failure!";
+
+	@Test
+	public void stepTest1() {
+		step(context -> {
+			Assertions.fail(FAILURE_MESSAGE);
+		});
+	}
 }

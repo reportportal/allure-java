@@ -14,21 +14,25 @@
  * limitations under the License.
  */
 
-dependencies {
-    api 'com.epam.reportportal:commons-model:5.0.0'
-    api 'com.google.code.findbugs:jsr305:3.0.2'
-    api 'io.qameta.allure:allure-java-commons:2.14.0'
+package com.epam.reportportal.testng.features.steps;
 
-    implementation 'com.epam.reportportal:client-java:5.1.0-RC-12'
-}
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.testng.annotations.Test;
 
-test {
-    useJUnitPlatform()
-    outputs.upToDateWhen { false }
-    maxParallelForks(5) // it's forks - separate JVMs, should not interfere each other
-    doFirst {
-        def weaver = configurations.testRuntimeClasspath.find { it.name.contains("aspectjweaver") }
-        jvmArgs += "-javaagent:$weaver"
-    }
-    environment "AGENT_NO_ANALYTICS", "1"
+import static io.qameta.allure.Allure.step;
+
+public class TwoStaticAnonymousSteps {
+	private static final Logger LOGGER = LoggerFactory.getLogger(TwoStaticAnonymousSteps.class);
+	public static final String LOG_MESSAGE = TwoStaticAnonymousSteps.class.getSimpleName() + " test step ";
+
+	@Test
+	public void stepTest1() {
+		step(context -> {
+			LOGGER.info(LOG_MESSAGE + 1);
+		});
+		step(context -> {
+			LOGGER.info(LOG_MESSAGE + 2);
+		});
+	}
 }

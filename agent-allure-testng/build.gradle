@@ -15,10 +15,12 @@
  */
 
 dependencies {
-    api 'com.epam.reportportal:agent-java-testng:5.1.0-RC-2'
+    api 'com.epam.reportportal:agent-java-testng:5.1.0-RC-4'
     implementation project(":allure-common")
 
     testImplementation 'io.qameta.allure:allure-java-commons:2.14.0'
+    testImplementation 'ch.qos.logback:logback-classic:1.2.3'
+    testImplementation 'com.epam.reportportal:logger-java-logback:5.0.3'
 }
 
 test {

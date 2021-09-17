@@ -17,5 +17,6 @@
 <aspectj>
     <aspects>
         <aspect name="com.epam.reportportal.aspect.StepAspect"/>
+        <aspect name="com.epam.reportportal.allure.StepAspect"/>
     </aspects>
 </aspectj>

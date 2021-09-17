@@ -23,8 +23,8 @@ import com.epam.ta.reportportal.ws.model.StartTestItemRQ;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.testng.TestNG;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -54,7 +54,8 @@ public class MutedAnnotationTest {
 
 	@Test
 	public void test_muted_annotation_method_level_processing() {
-		runTests(Collections.singletonList(TestNgListener.class), "muted_method_tests.xml");
+		TestNG result = runTests("muted_method_tests.xml");
+		assertThat(result.getStatus(), equalTo(0));
 
 		verify(client).startLaunch(any()); // Start launch
 		verify(client).startTestItem(any());  // Start parent suites
@@ -72,7 +73,8 @@ public class MutedAnnotationTest {
 
 	@Test
 	public void test_muted_annotation_class_level_processing() {
-		runTests(Collections.singletonList(TestNgListener.class), "muted_class_tests.xml");
+		TestNG result = runTests("muted_class_tests.xml");
+		assertThat(result.getStatus(), equalTo(0));
 
 		verify(client).startLaunch(any()); // Start launch
 		verify(client).startTestItem(any());  // Start parent suites

@@ -16,14 +16,40 @@
 
 package com.epam.reportportal.allure;
 
+import com.epam.reportportal.listeners.ItemStatus;
+import com.epam.reportportal.listeners.LogLevel;
+import com.epam.reportportal.service.Launch;
+import com.epam.reportportal.service.ReportPortal;
+import com.epam.ta.reportportal.ws.model.FinishTestItemRQ;
+import com.epam.ta.reportportal.ws.model.StartTestItemRQ;
+import io.qameta.allure.Allure;
+import io.qameta.allure.Description;
 import io.qameta.allure.Step;
+import io.qameta.allure.model.Status;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
-import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.annotation.*;
+import org.aspectj.lang.reflect.MethodSignature;
+
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
+
+import static java.util.Optional.ofNullable;
 
 @Aspect
 public class StepAspect {
+
+	private static final Map<Status, ItemStatus> STATUS_MAPPER = Collections.unmodifiableMap(new HashMap<Status, ItemStatus>() {{
+		put(Status.PASSED, ItemStatus.PASSED);
+		put(Status.FAILED, ItemStatus.FAILED);
+		put(Status.BROKEN, ItemStatus.INTERRUPTED);
+		put(Status.SKIPPED, ItemStatus.SKIPPED);
+	}});
+
+	private static final Map<String, AtomicLong> STEP_COUNTERS = new ConcurrentHashMap<>();
 
 	@Pointcut("@annotation(step)")
 	public void withStepAnnotation(Step step) {
@@ -35,17 +61,122 @@ public class StepAspect {
 
 	}
 
-	@Pointcut("execution(public static void Allure.step(..))")
+	@Pointcut("execution(public static * io.qameta.allure.Allure.step(..))")
 	public void stepMethod() {
 
 	}
 
-	@Before(value = "!stepMethod() && anyMethod() && withStepAnnotation(step)", argNames = "joinPoint,step")
+	@Before(value = "!stepMethod() && (anyMethod() && withStepAnnotation(step))", argNames = "joinPoint,step")
 	public void startNestedStepAnnotation(JoinPoint joinPoint, Step step) {
+		MethodSignature signature = (MethodSignature) joinPoint.getSignature();
+		StartTestItemRQ startStepRequest = com.epam.reportportal.aspect.StepRequestUtils.buildStartStepRequest(step.value(),
+				ofNullable(signature.getMethod().getAnnotation(Description.class)).map(Description::value).orElse(null),
+				signature
+		);
+		ofNullable(Launch.currentLaunch()).ifPresent(l -> l.getStepReporter().startNestedStep(startStepRequest));
+	}
+
+	@AfterReturning(value = "!stepMethod() && (anyMethod() && withStepAnnotation(step))", argNames = "step")
+	public void finishNestedStep(Step step) {
+		ofNullable(Launch.currentLaunch()).ifPresent(l -> l.getStepReporter().finishNestedStep());
+	}
+
+	@AfterThrowing(value = "!stepMethod() && (anyMethod() && withStepAnnotation(step))", throwing = "throwable", argNames = "step,throwable")
+	public void failedNestedStep(Step step, final Throwable throwable) {
+		ofNullable(Launch.currentLaunch()).ifPresent(l -> l.getStepReporter().finishNestedStep(throwable));
 	}
 
 	@Before(value = "stepMethod()", argNames = "joinPoint")
 	public void startNestedStepExplicit(JoinPoint joinPoint) {
+		Object[] args = joinPoint.getArgs();
+		int argLength = args.length;
+		switch (argLength) {
+			case 1:
+				if (args[0].getClass().getName().startsWith("io.qameta.allure.Allure")) {
+					return;
+				}
+				if (args[0] instanceof Allure.ThrowableContextRunnable || args[0] instanceof Allure.ThrowableContextRunnableVoid) {
+					String className = args[0].getClass().getName();
+					int innerClassSignIndex = className.indexOf('$');
+					String parentClassName = innerClassSignIndex > 0 ? className.substring(0, innerClassSignIndex) : className;
+					String parentSimpleName = parentClassName.substring(parentClassName.lastIndexOf('.') + 1);
+					AtomicLong stepCounter = STEP_COUNTERS.computeIfAbsent(parentClassName, k -> new AtomicLong());
+					String stepName = innerClassSignIndex > 0 ?
+							parentSimpleName + " anonymous step " + stepCounter.incrementAndGet() :
+							parentSimpleName + " step " + stepCounter.incrementAndGet();
+					StartTestItemRQ rq = com.epam.reportportal.service.step.StepRequestUtils.buildStartStepRequest(stepName, null);
+					ofNullable(Launch.currentLaunch()).ifPresent(l -> l.getStepReporter().startNestedStep(rq));
+				}
+				return;
+			case 2:
+				if (args[1] instanceof Status) {
+					StartTestItemRQ rq = com.epam.reportportal.service.step.StepRequestUtils.buildStartStepRequest(args[0].toString(),
+							null
+					);
+					ofNullable(Launch.currentLaunch()).ifPresent(l -> l.getStepReporter().startNestedStep(rq));
+					return;
+				}
+				if (args[1] instanceof Allure.ThrowableRunnable || args[1] instanceof Allure.ThrowableRunnableVoid
+						|| args[1] instanceof Allure.ThrowableContextRunnableVoid || args[1] instanceof Allure.ThrowableContextRunnable) {
+					StartTestItemRQ rq = com.epam.reportportal.service.step.StepRequestUtils.buildStartStepRequest(args[0].toString(),
+							null
+					);
+					ofNullable(Launch.currentLaunch()).ifPresent(l -> l.getStepReporter().startNestedStep(rq));
+				}
+		}
+	}
 
+	@AfterReturning(value = "stepMethod()", argNames = "joinPoint")
+	public void finishNestedStep(JoinPoint joinPoint) {
+		Object[] args = joinPoint.getArgs();
+		int argLength = args.length;
+		switch (argLength) {
+			case 1:
+				if (args[0].getClass().getName().startsWith("io.qameta.allure.Allure")) {
+					return;
+				}
+				if (args[0] instanceof Allure.ThrowableContextRunnable || args[0] instanceof Allure.ThrowableContextRunnableVoid) {
+					ofNullable(Launch.currentLaunch()).ifPresent(l -> l.getStepReporter().finishNestedStep());
+				}
+				return;
+			case 2:
+				if (args[1] instanceof Status) {
+					FinishTestItemRQ rq = com.epam.reportportal.service.step.StepRequestUtils.buildFinishTestItemRequest(ofNullable(
+							STATUS_MAPPER.get((Status) args[1])).orElseGet(() -> {
+						ReportPortal.emitLog("Unable to convert item status: " + args[1].toString(),
+								LogLevel.ERROR.name(),
+								Calendar.getInstance().getTime()
+						);
+						return ItemStatus.FAILED;
+					}));
+					ofNullable(Launch.currentLaunch()).ifPresent(l -> l.getStepReporter().finishNestedStep(rq));
+					return;
+				}
+				if (args[1] instanceof Allure.ThrowableRunnable || args[1] instanceof Allure.ThrowableRunnableVoid
+						|| args[1] instanceof Allure.ThrowableContextRunnableVoid || args[1] instanceof Allure.ThrowableContextRunnable) {
+					ofNullable(Launch.currentLaunch()).ifPresent(l -> l.getStepReporter().finishNestedStep());
+				}
+		}
+	}
+
+	@AfterThrowing(value = "stepMethod()", throwing = "throwable", argNames = "joinPoint,throwable")
+	public void finishNestedStepFailure(JoinPoint joinPoint, Throwable throwable) {
+		Object[] args = joinPoint.getArgs();
+		int argLength = args.length;
+		switch (argLength) {
+			case 1:
+				if (args[0].getClass().getName().startsWith("io.qameta.allure.Allure")) {
+					return;
+				}
+				if (args[0] instanceof Allure.ThrowableContextRunnableVoid || args[0] instanceof Allure.ThrowableContextRunnable) {
+					ofNullable(Launch.currentLaunch()).ifPresent(l -> l.getStepReporter().finishNestedStep(throwable));
+				}
+				return;
+			case 2:
+				if (args[1] instanceof Allure.ThrowableRunnable || args[1] instanceof Allure.ThrowableRunnableVoid
+						|| args[1] instanceof Allure.ThrowableContextRunnableVoid || args[1] instanceof Allure.ThrowableContextRunnable) {
+					ofNullable(Launch.currentLaunch()).ifPresent(l -> l.getStepReporter().finishNestedStep(throwable));
+				}
+		}
 	}
 }

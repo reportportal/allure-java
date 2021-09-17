@@ -1,25 +1,38 @@
 package com.epam.reportportal.testng.util;
 
 import com.epam.reportportal.listeners.ListenerParameters;
+import com.epam.reportportal.listeners.LogLevel;
 import com.epam.reportportal.service.ReportPortalClient;
 import com.epam.reportportal.util.test.CommonUtils;
+import com.epam.reportportal.utils.http.HttpRequestUtils;
+import com.epam.ta.reportportal.ws.model.BatchSaveOperatingRS;
+import com.epam.ta.reportportal.ws.model.Constants;
 import com.epam.ta.reportportal.ws.model.OperationCompletionRS;
-import com.epam.ta.reportportal.ws.model.StartTestItemRQ;
 import com.epam.ta.reportportal.ws.model.item.ItemCreatedRS;
-import com.epam.ta.reportportal.ws.model.launch.StartLaunchRQ;
 import com.epam.ta.reportportal.ws.model.launch.StartLaunchRS;
+import com.epam.ta.reportportal.ws.model.log.SaveLogRQ;
+import com.fasterxml.jackson.core.type.TypeReference;
 import io.reactivex.Maybe;
+import okhttp3.MultipartBody;
+import okio.Buffer;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import org.mockito.ArgumentCaptor;
 import org.mockito.stubbing.Answer;
 import org.testng.ITestNGListener;
 import org.testng.TestNG;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static java.util.Optional.ofNullable;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
@@ -30,9 +43,6 @@ public class TestUtils {
 
 	public static final String TEST_NAME = "TestContainer";
 
-	// 10 milliseconds is enough to separate one test from another
-	public static final long MINIMAL_TEST_PAUSE = 20L;
-
 	private static TestNG getTestNg(List<Class<? extends ITestNGListener>> listeners) {
 		TestNG testNG = new TestNG(true);
 		testNG.setListenerClasses(listeners);
@@ -41,11 +51,19 @@ public class TestUtils {
 		return testNG;
 	}
 
+	public static TestNG runTests(Class<?>... classes) {
+		return runTests(Collections.singletonList(TestNgListener.class), classes);
+	}
+
 	public static TestNG runTests(List<Class<? extends ITestNGListener>> listeners, Class<?>... classes) {
 		final TestNG testNG = getTestNg(listeners);
 		testNG.setTestClasses(classes);
 		testNG.run();
 		return testNG;
+	}
+
+	public static TestNG runTests(String xmlPath) {
+		return runTests(Collections.singletonList(TestNgListener.class), xmlPath);
 	}
 
 	public static TestNG runTests(List<Class<? extends ITestNGListener>> listeners, String xmlPath) {
@@ -57,47 +75,11 @@ public class TestUtils {
 		return testNG;
 	}
 
-	public static Maybe<String> createMaybeUuid() {
-		return createMaybe(UUID.randomUUID().toString());
-	}
-
 	public static <T> Maybe<T> createMaybe(T id) {
 		return Maybe.create(emitter -> {
 			emitter.onSuccess(id);
 			emitter.onComplete();
 		});
-	}
-
-	public static StartTestItemRQ extractRequest(ArgumentCaptor<StartTestItemRQ> captor, String methodType) {
-		return captor.getAllValues()
-				.stream()
-				.filter(it -> methodType.equalsIgnoreCase(it.getType()))
-				.findAny()
-				.orElseThrow(() -> new AssertionError(String.format("Method type '%s' should be present among requests", methodType)));
-	}
-
-	public static List<StartTestItemRQ> extractRequests(ArgumentCaptor<StartTestItemRQ> captor, String methodType) {
-		return captor.getAllValues().stream().filter(it -> methodType.equalsIgnoreCase(it.getType())).collect(Collectors.toList());
-	}
-
-	/**
-	 * Generates a unique ID shorter than UUID based on current time in milliseconds and thread ID.
-	 *
-	 * @return a unique ID string
-	 */
-	public static String generateUniqueId() {
-		return System.currentTimeMillis() + "-" + Thread.currentThread().getId() + "-" + ThreadLocalRandom.current().nextInt(9999);
-	}
-
-	public static StartTestItemRQ standardStartStepRequest() {
-		StartTestItemRQ rq = new StartTestItemRQ();
-		rq.setStartTime(Calendar.getInstance().getTime());
-		String id = generateUniqueId();
-		rq.setName("Step_" + id);
-		rq.setDescription("Test step description");
-		rq.setUniqueId(id);
-		rq.setType("STEP");
-		return rq;
 	}
 
 	public static void mockLaunch(ReportPortalClient client, String launchUuid, String suiteUuid, String testClassUuid,
@@ -172,11 +154,58 @@ public class TestUtils {
 		return result;
 	}
 
-	public static StartLaunchRQ launchRQ(ListenerParameters parameters) {
-		StartLaunchRQ result = new StartLaunchRQ();
-		result.setName(parameters.getLaunchName());
-		result.setStartTime(Calendar.getInstance().getTime());
-		result.setMode(parameters.getLaunchRunningMode());
-		return result;
+	@SuppressWarnings("unchecked")
+	public static void mockLogging(ReportPortalClient client) {
+		when(client.log(any(List.class))).thenReturn(createMaybe(new BatchSaveOperatingRS()));
+	}
+
+	public static List<SaveLogRQ> extractJsonParts(List<MultipartBody.Part> parts) {
+		return parts.stream()
+				.filter(p -> ofNullable(p.headers()).map(headers -> headers.get("Content-Disposition"))
+						.map(h -> h.contains(Constants.LOG_REQUEST_JSON_PART))
+						.orElse(false))
+				.map(MultipartBody.Part::body)
+				.map(b -> {
+					Buffer buf = new Buffer();
+					try {
+						b.writeTo(buf);
+					} catch (IOException ignore) {
+					}
+					return buf.readByteArray();
+				})
+				.map(b -> {
+					try {
+						return HttpRequestUtils.MAPPER.readValue(b, new TypeReference<List<SaveLogRQ>>() {
+						});
+					} catch (IOException e) {
+						return Collections.<SaveLogRQ>emptyList();
+					}
+				})
+				.flatMap(Collection::stream)
+				.collect(Collectors.toList());
+	}
+
+	public static List<SaveLogRQ> filterLogs(ArgumentCaptor<List<MultipartBody.Part>> logCaptor, Predicate<SaveLogRQ> filter) {
+		return logCaptor.getAllValues().stream().flatMap(l -> extractJsonParts(l).stream()).filter(filter).collect(Collectors.toList());
+	}
+
+	public static void verifyLogged(@Nonnull final ArgumentCaptor<List<MultipartBody.Part>> logCaptor, @Nullable final String itemId,
+			@Nonnull final LogLevel level, @Nonnull final String message) {
+		verifyLogged(logCaptor, Collections.singletonList(Triple.of(itemId, level, message)));
+	}
+
+	public static void verifyLogged(@Nonnull final ArgumentCaptor<List<MultipartBody.Part>> logCaptor,
+			Collection<Triple<String, LogLevel, String>> messages) {
+		List<SaveLogRQ> expectedErrorList = filterLogs(
+				logCaptor,
+				l -> messages.stream()
+						.anyMatch(e -> e.getMiddle().name().equals(l.getLevel()) && l.getMessage() != null && l.getMessage()
+								.contains(e.getRight()))
+		);
+		assertThat(expectedErrorList, hasSize(messages.size()));
+		assertThat(
+				expectedErrorList.stream().map(SaveLogRQ::getItemUuid).collect(Collectors.toList()),
+				containsInAnyOrder(messages.stream().map(Triple::getLeft).toArray())
+		);
 	}
 }
