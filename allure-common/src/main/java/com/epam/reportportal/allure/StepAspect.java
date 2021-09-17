@@ -20,6 +20,7 @@ import com.epam.reportportal.listeners.ItemStatus;
 import com.epam.reportportal.listeners.LogLevel;
 import com.epam.reportportal.service.Launch;
 import com.epam.reportportal.service.ReportPortal;
+import com.epam.reportportal.service.step.StepRequestUtils;
 import com.epam.ta.reportportal.ws.model.FinishTestItemRQ;
 import com.epam.ta.reportportal.ws.model.StartTestItemRQ;
 import io.qameta.allure.Allure;
@@ -159,8 +160,8 @@ public class StepAspect {
 		}
 	}
 
-	@AfterThrowing(value = "stepMethod()", throwing = "throwable", argNames = "joinPoint,throwable")
-	public void finishNestedStepFailure(JoinPoint joinPoint, Throwable throwable) {
+	@AfterThrowing(value = "stepMethod()", argNames = "joinPoint")
+	public void finishNestedStepFailure(JoinPoint joinPoint) {
 		Object[] args = joinPoint.getArgs();
 		int argLength = args.length;
 		switch (argLength) {
@@ -169,13 +170,15 @@ public class StepAspect {
 					return;
 				}
 				if (args[0] instanceof Allure.ThrowableContextRunnableVoid || args[0] instanceof Allure.ThrowableContextRunnable) {
-					ofNullable(Launch.currentLaunch()).ifPresent(l -> l.getStepReporter().finishNestedStep(throwable));
+					FinishTestItemRQ rq = StepRequestUtils.buildFinishTestItemRequest(ItemStatus.FAILED);
+					ofNullable(Launch.currentLaunch()).ifPresent(l -> l.getStepReporter().finishNestedStep(rq));
 				}
 				return;
 			case 2:
 				if (args[1] instanceof Allure.ThrowableRunnable || args[1] instanceof Allure.ThrowableRunnableVoid
 						|| args[1] instanceof Allure.ThrowableContextRunnableVoid || args[1] instanceof Allure.ThrowableContextRunnable) {
-					ofNullable(Launch.currentLaunch()).ifPresent(l -> l.getStepReporter().finishNestedStep(throwable));
+					FinishTestItemRQ rq = StepRequestUtils.buildFinishTestItemRequest(ItemStatus.FAILED);
+					ofNullable(Launch.currentLaunch()).ifPresent(l -> l.getStepReporter().finishNestedStep(rq));
 				}
 		}
 	}

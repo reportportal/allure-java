@@ -24,7 +24,6 @@ import com.epam.reportportal.testng.features.steps.*;
 import com.epam.reportportal.testng.util.TestNgListener;
 import com.epam.ta.reportportal.ws.model.FinishTestItemRQ;
 import com.epam.ta.reportportal.ws.model.StartTestItemRQ;
-import com.epam.ta.reportportal.ws.model.log.SaveLogRQ;
 import okhttp3.MultipartBody;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,7 +38,8 @@ import java.util.stream.Stream;
 
 import static com.epam.reportportal.testng.util.TestUtils.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.matchesPattern;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.*;
@@ -141,13 +141,11 @@ public class StaticNestedStepsTest {
 		ArgumentCaptor<List<MultipartBody.Part>> logCaptor = ArgumentCaptor.forClass(List.class);
 		verify(client, atLeast(1)).log(logCaptor.capture());
 
-		List<SaveLogRQ> expectedErrorList = filterLogs(
-				logCaptor,
-				l -> LogLevel.ERROR.name().equals(l.getLevel()) && l.getMessage() != null && l.getMessage()
-						.contains("org.opentest4j.AssertionFailedError: " + StaticAnonymousStepFailure.FAILURE_MESSAGE)
-						&& stepUuid.equals(l.getItemUuid())
+		verifyLogged(logCaptor,
+				stepUuid,
+				LogLevel.ERROR,
+				"org.opentest4j.AssertionFailedError: " + StaticAnonymousStepFailure.FAILURE_MESSAGE
 		);
-		assertThat(expectedErrorList, hasSize(1));
 	}
 
 	@Test
