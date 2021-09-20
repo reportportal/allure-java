@@ -52,6 +52,8 @@ public class StepAspect {
 
 	private static final Map<String, AtomicLong> STEP_COUNTERS = new ConcurrentHashMap<>();
 
+	public static String STEP_DESCRIPTION = "Step description: ";
+
 	@Pointcut("@annotation(step)")
 	public void withStepAnnotation(Step step) {
 
@@ -73,10 +75,16 @@ public class StepAspect {
 		StartTestItemRQ startStepRequest = com.epam.reportportal.aspect.StepRequestUtils.buildStartStepRequest(step.value().isEmpty() ?
 						signature.getName() :
 						step.value(),
-				ofNullable(signature.getMethod().getAnnotation(Description.class)).map(Description::value).orElse(null),
+				ofNullable(signature.getMethod().getAnnotation(Description.class)).map(Description::value)
+						.filter(d -> !d.isEmpty())
+						.orElse(null),
 				signature
 		);
 		ofNullable(Launch.currentLaunch()).ifPresent(l -> l.getStepReporter().startNestedStep(startStepRequest));
+		ofNullable(startStepRequest.getDescription()).ifPresent(d -> ReportPortal.emitLog(STEP_DESCRIPTION + d,
+				LogLevel.INFO.name(),
+				Calendar.getInstance().getTime()
+		));
 	}
 
 	@AfterReturning(value = "!stepMethod() && (anyMethod() && withStepAnnotation(step))", argNames = "step")

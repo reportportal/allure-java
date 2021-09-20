@@ -16,14 +16,12 @@
 
 package com.epam.reportportal.testng;
 
+import com.epam.reportportal.allure.StepAspect;
 import com.epam.reportportal.listeners.ItemStatus;
 import com.epam.reportportal.listeners.LogLevel;
 import com.epam.reportportal.service.ReportPortal;
 import com.epam.reportportal.service.ReportPortalClient;
-import com.epam.reportportal.testng.features.steps.MethodNamedSingleStep;
-import com.epam.reportportal.testng.features.steps.MethodSingleStep;
-import com.epam.reportportal.testng.features.steps.MethodStepFailure;
-import com.epam.reportportal.testng.features.steps.StaticAnonymousStepFailure;
+import com.epam.reportportal.testng.features.steps.*;
 import com.epam.reportportal.testng.util.TestNgListener;
 import com.epam.ta.reportportal.ws.model.FinishTestItemRQ;
 import com.epam.ta.reportportal.ws.model.StartTestItemRQ;
@@ -41,7 +39,7 @@ import java.util.stream.Stream;
 
 import static com.epam.reportportal.testng.util.TestUtils.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.*;
@@ -107,7 +105,7 @@ public class MethodNestedStepsTest {
 
 	@Test
 	@SuppressWarnings("unchecked")
-	public void test_static_anonymous_step_failure() {
+	public void test_method_step_failure() {
 		mockNestedSteps(client, nestedStepLinks.get(0));
 		TestNG result = runTests(MethodStepFailure.class);
 		assertThat(result.getStatus(), equalTo(1));
@@ -123,11 +121,86 @@ public class MethodNestedStepsTest {
 		ArgumentCaptor<List<MultipartBody.Part>> logCaptor = ArgumentCaptor.forClass(List.class);
 		verify(client, atLeast(1)).log(logCaptor.capture());
 
+		verifyLogged(logCaptor, stepUuid, LogLevel.ERROR, "org.opentest4j.AssertionFailedError: " + MethodStepFailure.FAILURE_MESSAGE);
+	}
+
+	@Test
+	@SuppressWarnings("unchecked")
+	public void test_method_step_description() {
+		mockNestedSteps(client, nestedStepLinks.get(0));
+		TestNG result = runTests(MethodStepDescription.class);
+		assertThat(result.getStatus(), equalTo(0));
+
+		verify(client).startTestItem(same(stepUuid), any(StartTestItemRQ.class));
+
+		ArgumentCaptor<FinishTestItemRQ> finishNestedStepCapture = ArgumentCaptor.forClass(FinishTestItemRQ.class);
+		verify(client).finishTestItem(same(nestedSteps.get(0)), finishNestedStepCapture.capture());
+
+		FinishTestItemRQ finishStep = finishNestedStepCapture.getValue();
+		assertThat(finishStep.getStatus(), equalTo(ItemStatus.PASSED.name()));
+
+		ArgumentCaptor<List<MultipartBody.Part>> logCaptor = ArgumentCaptor.forClass(List.class);
+		verify(client, atLeast(1)).log(logCaptor.capture());
+
 		verifyLogged(logCaptor,
-				stepUuid,
-				LogLevel.ERROR,
-				"org.opentest4j.AssertionFailedError: " + MethodStepFailure.FAILURE_MESSAGE
+				nestedSteps.get(0),
+				LogLevel.INFO,
+				StepAspect.STEP_DESCRIPTION + MethodStepDescription.TEST_STEP_DESCRIPTION
 		);
 	}
 
+	@Test
+	public void test_method_two_steps() {
+		mockNestedSteps(client, nestedStepLinks);
+		TestNG result = runTests(Collections.singletonList(TestNgListener.class), MethodTwoSteps.class);
+		assertThat(result.getStatus(), equalTo(0));
+
+		ArgumentCaptor<StartTestItemRQ> startNestedStepCapture = ArgumentCaptor.forClass(StartTestItemRQ.class);
+		verify(client, times(2)).startTestItem(same(stepUuid), startNestedStepCapture.capture());
+
+		List<StartTestItemRQ> startSteps = startNestedStepCapture.getAllValues();
+		startSteps.forEach(s -> {
+			assertThat(s.getName(), not(emptyOrNullString()));
+			assertThat(s.isHasStats(), equalTo(Boolean.FALSE));
+		});
+
+		ArgumentCaptor<FinishTestItemRQ> finishNestedStepCapture = ArgumentCaptor.forClass(FinishTestItemRQ.class);
+		verify(client).finishTestItem(same(nestedSteps.get(0)), finishNestedStepCapture.capture());
+		verify(client).finishTestItem(same(nestedSteps.get(1)), finishNestedStepCapture.capture());
+
+		finishNestedStepCapture.getAllValues().forEach(f -> assertThat(f.getStatus(), equalTo(ItemStatus.PASSED.name())));
+	}
+
+	@Test
+	public void test_two_levels_method_step() {
+		mockNestedSteps(client, nestedStepLinks.get(0));
+		mockNestedSteps(client, Pair.of(nestedSteps.get(0), nestedSteps.get(1)));
+		TestNG result = runTests(MethodTwoLevelsStep.class);
+		assertThat(result.getStatus(), equalTo(0));
+
+		ArgumentCaptor<StartTestItemRQ> startNestedStepCapture1 = ArgumentCaptor.forClass(StartTestItemRQ.class);
+		verify(client).startTestItem(same(stepUuid), startNestedStepCapture1.capture());
+		ArgumentCaptor<StartTestItemRQ> startNestedStepCapture2 = ArgumentCaptor.forClass(StartTestItemRQ.class);
+		verify(client).startTestItem(same(nestedSteps.get(0)), startNestedStepCapture2.capture());
+
+		StartTestItemRQ startStep1 = startNestedStepCapture1.getValue();
+		assertThat(startStep1.getName(), not(emptyOrNullString()));
+		assertThat(startStep1.isHasStats(), equalTo(Boolean.FALSE));
+
+		StartTestItemRQ startStep2 = startNestedStepCapture2.getValue();
+		assertThat(startStep2.getName(), not(emptyOrNullString()));
+		assertThat(startStep2.isHasStats(), equalTo(Boolean.FALSE));
+
+		ArgumentCaptor<FinishTestItemRQ> finishNestedStepCapture1 = ArgumentCaptor.forClass(FinishTestItemRQ.class);
+		verify(client).finishTestItem(same(nestedSteps.get(0)), finishNestedStepCapture1.capture());
+
+		FinishTestItemRQ finishStep1 = finishNestedStepCapture1.getValue();
+		assertThat(finishStep1.getStatus(), equalTo(ItemStatus.PASSED.name()));
+
+		ArgumentCaptor<FinishTestItemRQ> finishNestedStepCapture2 = ArgumentCaptor.forClass(FinishTestItemRQ.class);
+		verify(client).finishTestItem(same(nestedSteps.get(1)), finishNestedStepCapture2.capture());
+
+		FinishTestItemRQ finishStep2 = finishNestedStepCapture2.getValue();
+		assertThat(finishStep2.getStatus(), equalTo(ItemStatus.PASSED.name()));
+	}
 }
