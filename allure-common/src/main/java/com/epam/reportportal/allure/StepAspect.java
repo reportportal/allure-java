@@ -70,7 +70,9 @@ public class StepAspect {
 	@Before(value = "!stepMethod() && (anyMethod() && withStepAnnotation(step))", argNames = "joinPoint,step")
 	public void startNestedStepAnnotation(JoinPoint joinPoint, Step step) {
 		MethodSignature signature = (MethodSignature) joinPoint.getSignature();
-		StartTestItemRQ startStepRequest = com.epam.reportportal.aspect.StepRequestUtils.buildStartStepRequest(step.value(),
+		StartTestItemRQ startStepRequest = com.epam.reportportal.aspect.StepRequestUtils.buildStartStepRequest(step.value().isEmpty() ?
+						signature.getName() :
+						step.value(),
 				ofNullable(signature.getMethod().getAnnotation(Description.class)).map(Description::value).orElse(null),
 				signature
 		);
@@ -82,9 +84,12 @@ public class StepAspect {
 		ofNullable(Launch.currentLaunch()).ifPresent(l -> l.getStepReporter().finishNestedStep());
 	}
 
-	@AfterThrowing(value = "!stepMethod() && (anyMethod() && withStepAnnotation(step))", throwing = "throwable", argNames = "step,throwable")
-	public void failedNestedStep(Step step, final Throwable throwable) {
-		ofNullable(Launch.currentLaunch()).ifPresent(l -> l.getStepReporter().finishNestedStep(throwable));
+	@AfterThrowing(value = "!stepMethod() && (anyMethod() && withStepAnnotation(step))", argNames = "step")
+	public void failedNestedStep(Step step) {
+		ofNullable(Launch.currentLaunch()).ifPresent(l -> {
+			FinishTestItemRQ rq = StepRequestUtils.buildFinishTestItemRequest(ItemStatus.FAILED);
+			l.getStepReporter().finishNestedStep(rq);
+		});
 	}
 
 	@Before(value = "stepMethod()", argNames = "joinPoint")
