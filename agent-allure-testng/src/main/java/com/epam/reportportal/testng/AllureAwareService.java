@@ -44,7 +44,7 @@ public class AllureAwareService extends TestNGService {
 
 	@Override
 	@Nonnull
-	protected StartTestItemRQ buildStartTestItemRq(@Nonnull ITestContext testContext) {
+	protected StartTestItemRQ buildStartTestItemRq(@Nonnull final ITestContext testContext) {
 		StartTestItemRQ rq = super.buildStartTestItemRq(testContext);
 		ofNullable(testContext.getCurrentXmlTest()).map(XmlTest::getClasses).ifPresent(xmlClasses -> xmlClasses.forEach(c -> {
 			processLabels(rq, c.getSupportClass());
@@ -60,7 +60,7 @@ public class AllureAwareService extends TestNGService {
 
 	@Override
 	@Nonnull
-	protected StartTestItemRQ buildStartConfigurationRq(@Nonnull ITestResult testResult, @Nullable TestMethodType type) {
+	protected StartTestItemRQ buildStartConfigurationRq(@Nonnull final ITestResult testResult, @Nullable final TestMethodType type) {
 		StartTestItemRQ rq = super.buildStartConfigurationRq(testResult, type);
 		getMethod(testResult.getMethod()).ifPresent(m -> {
 			processLabels(rq, m);
@@ -72,7 +72,7 @@ public class AllureAwareService extends TestNGService {
 
 	@Override
 	@Nonnull
-	protected StartTestItemRQ buildStartStepRq(final @Nonnull ITestResult testResult, final @Nonnull TestMethodType type) {
+	protected StartTestItemRQ buildStartStepRq(@Nonnull final ITestResult testResult, @Nonnull final TestMethodType type) {
 		StartTestItemRQ rq = super.buildStartStepRq(testResult, type);
 		getMethod(testResult.getMethod()).ifPresent(m -> {
 			processLabels(rq, m);
