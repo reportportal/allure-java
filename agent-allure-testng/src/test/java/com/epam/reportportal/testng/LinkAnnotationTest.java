@@ -16,10 +16,11 @@
 
 package com.epam.reportportal.testng;
 
-import com.epam.reportportal.allure.AnnotationUtils;
+import com.epam.reportportal.allure.FormatUtils;
 import com.epam.reportportal.service.ReportPortal;
 import com.epam.reportportal.service.ReportPortalClient;
 import com.epam.reportportal.testng.features.TestMyFirstFeature;
+import com.epam.reportportal.testng.features.links.TestLinkAndDescription;
 import com.epam.reportportal.testng.util.TestNgListener;
 import com.epam.ta.reportportal.ws.model.StartTestItemRQ;
 import org.junit.jupiter.api.BeforeEach;
@@ -71,12 +72,29 @@ public class LinkAnnotationTest {
 		AtomicInteger counter = new AtomicInteger();
 		items.forEach(i -> {
 			String description = i.getDescription();
-			assertThat(description, allOf(not(emptyOrNullString()), startsWith(AnnotationUtils.LINK_PREFIX)));
+			assertThat(description, allOf(not(emptyOrNullString()), startsWith(FormatUtils.LINK_PREFIX)));
 			List<String> links = Arrays.asList(description.substring(
-					description.indexOf(AnnotationUtils.LINK_PREFIX) + AnnotationUtils.LINK_PREFIX.length()).split("\n"));
+					description.indexOf(FormatUtils.LINK_PREFIX) + FormatUtils.LINK_PREFIX.length()).split("\n"));
 			assertThat(links, hasSize(counter.incrementAndGet()));
 
 			links.forEach(l -> assertThat(l, containsString("(https://example.com")));
 		});
+	}
+
+	@Test
+	public void test_description_should_not_override_attached_links() {
+		runTests(TestLinkAndDescription.class);
+
+		ArgumentCaptor<StartTestItemRQ> startMethodCapture = ArgumentCaptor.forClass(StartTestItemRQ.class);
+		verify(client).startTestItem(same(testClassUuid), startMethodCapture.capture()); // Start test step
+
+		StartTestItemRQ startRequest = startMethodCapture.getValue();
+		assertThat(startRequest.getDescription(),
+				equalTo(TestLinkAndDescription.DESCRIPTION + FormatUtils.MARKDOWN_DELIMITER + FormatUtils.LINK_PREFIX + String.format(
+						FormatUtils.LINK_MARKDOWN,
+						TestLinkAndDescription.LINK_NAME,
+						TestLinkAndDescription.LINK_URL
+				))
+		);
 	}
 }

@@ -76,9 +76,9 @@ public class AllureAwareService extends TestNGService {
 		StartTestItemRQ rq = super.buildStartStepRq(testResult, type);
 		getMethod(testResult.getMethod()).ifPresent(m -> {
 			processLabels(rq, m);
-			processLinks(rq, m);
 			processAllureId(rq, m);
 			processDescription(rq, Thread.currentThread().getContextClassLoader(), m);
+			processLinks(rq, m);
 			processPriority(rq, m);
 			processFlaky(rq, m);
 			processMuted(rq, m);
