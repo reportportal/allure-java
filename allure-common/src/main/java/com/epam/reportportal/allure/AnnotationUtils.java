@@ -42,22 +42,11 @@ import static java.util.Optional.ofNullable;
 
 public class AnnotationUtils {
 	public static final String MARKDOWN_DELIMITER = "\n\n---\n\n";
-	public static final String LINK_PREFIX = "Links:\n";
-	public static final String LINK_MARKDOWN = "[%s](%s)\n";
 
 	public static void processLinks(@Nonnull StartTestItemRQ rq, @Nullable AnnotatedElement source) {
-		ofNullable(source).map(io.qameta.allure.util.AnnotationUtils::getLinks).filter(l -> !l.isEmpty()).ifPresent(links -> {
-			StringBuilder builder = ofNullable(rq.getDescription()).filter(d -> !d.isEmpty()).map(d -> {
-				StringBuilder sb = new StringBuilder(d);
-				sb.append(MARKDOWN_DELIMITER);
-				return sb;
-			}).orElseGet(StringBuilder::new);
-			builder.append(LINK_PREFIX);
-			links.forEach(l -> builder.append(l.getUrl() == null ?
-					String.format(LINK_MARKDOWN, l.getName(), l.getName()) :
-					String.format(LINK_MARKDOWN, l.getName(), l.getUrl())));
-			rq.setDescription(builder.toString());
-		});
+		ofNullable(source).map(io.qameta.allure.util.AnnotationUtils::getLinks)
+				.filter(l -> !l.isEmpty())
+				.ifPresent(links -> rq.setDescription(FormatUtils.appendLinks(rq.getDescription(), links)));
 	}
 
 	@Nonnull
