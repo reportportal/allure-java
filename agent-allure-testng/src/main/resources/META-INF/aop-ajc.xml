@@ -16,8 +16,8 @@
 
 <aspectj>
     <aspects>
-        <aspect name="com.epam.reportportal.aspect.StepAspect"/>
-        <aspect name="com.epam.reportportal.allure.StepAspect"/>
-        <aspect name="com.epam.reportportal.allure.RuntimeAspect"/>
+        <aspect name="com.epam.reportportal.allure.StepAspect" />
+        <aspect name="com.epam.reportportal.allure.RuntimeAspect" />
+        <aspect name="com.epam.reportportal.allure.AttachmentAspect" />
     </aspects>
 </aspectj>
