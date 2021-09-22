@@ -20,6 +20,7 @@ import com.epam.reportportal.listeners.ItemStatus;
 import com.epam.reportportal.service.ReportPortal;
 import com.epam.reportportal.service.ReportPortalClient;
 import com.epam.reportportal.testng.features.inline.TestAttributeAdd;
+import com.epam.reportportal.testng.features.inline.TestDescriptionAdd;
 import com.epam.reportportal.testng.features.inline.TestNoUpdatesDescription;
 import com.epam.reportportal.testng.util.TestNgListener;
 import com.epam.ta.reportportal.ws.model.FinishTestItemRQ;
@@ -65,7 +66,7 @@ public class RuntimeUpdatesTest {
 	}
 
 	@Test
-	public void test_attribute_add_runtime() {
+	public void test_attribute_add() {
 		mockLogging(client);
 		TestNG result = runTests(TestAttributeAdd.class);
 		assertThat(result.getStatus(), equalTo(0));
@@ -78,5 +79,18 @@ public class RuntimeUpdatesTest {
 		ItemAttributesRQ attribute = finishItemRequest.getAttributes().iterator().next();
 		assertThat(attribute.getKey(), equalTo("epic"));
 		assertThat(attribute.getValue(), equalTo(TestAttributeAdd.EPIC));
+	}
+
+	@Test
+	public void test_description_add() {
+		mockLogging(client);
+		TestNG result = runTests(TestDescriptionAdd.class);
+		assertThat(result.getStatus(), equalTo(0));
+
+		ArgumentCaptor<FinishTestItemRQ> finishCaptor = ArgumentCaptor.forClass(FinishTestItemRQ.class);
+		verify(client).finishTestItem(same(stepUuid), finishCaptor.capture());
+
+		FinishTestItemRQ finishItemRequest = finishCaptor.getValue();
+		assertThat(finishItemRequest.getDescription(), equalTo(TestDescriptionAdd.DESCRIPTION));
 	}
 }

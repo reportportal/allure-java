@@ -105,7 +105,10 @@ public class AllureAwareService extends TestNGService {
 	protected FinishTestItemRQ buildFinishTestMethodRq(ItemStatus status, ITestResult testResult) {
 		FinishTestItemRQ rq = super.buildFinishTestMethodRq(status, testResult);
 		Maybe<String> itemId = (Maybe<String>) testResult.getAttribute(TestNGService.RP_ID);
-		ofNullable(RuntimeAspect.retrieveRuntimeDescription(itemId)).ifPresent(d -> DESCRIPTION_TRACKER.put(testResult, d));
+		ofNullable(RuntimeAspect.retrieveRuntimeDescription(itemId)).ifPresent(d -> {
+			DESCRIPTION_TRACKER.put(testResult, d);
+			rq.setDescription(d);
+		});
 		Set<Pair<String, String>> links = RuntimeAspect.retrieveRuntimeLinks(itemId);
 		ofNullable(links).ifPresent(l -> rq.setDescription(FormatUtils.appendLinks(DESCRIPTION_TRACKER.remove(testResult), l)));
 		rq.setAttributes(RuntimeAspect.retrieveRuntimeLabels(itemId));
