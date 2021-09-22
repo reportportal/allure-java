@@ -16,8 +16,13 @@
 
 package com.epam.reportportal.testng;
 
+import com.epam.reportportal.allure.FormatUtils;
+import com.epam.reportportal.allure.RuntimeAspect;
+import com.epam.reportportal.listeners.ItemStatus;
 import com.epam.reportportal.service.ReportPortal;
+import com.epam.ta.reportportal.ws.model.FinishTestItemRQ;
 import com.epam.ta.reportportal.ws.model.StartTestItemRQ;
+import io.reactivex.Maybe;
 import org.testng.ITestContext;
 import org.testng.ITestNGMethod;
 import org.testng.ITestResult;
@@ -27,12 +32,16 @@ import org.testng.xml.XmlTest;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.Method;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static com.epam.reportportal.allure.AnnotationUtils.*;
 import static java.util.Optional.ofNullable;
 
 public class AllureAwareService extends TestNGService {
+
+	private static final Map<ITestResult, String> DESCRIPTION_TRACKER = new ConcurrentHashMap<>();
 
 	public AllureAwareService() {
 		super();
@@ -64,9 +73,10 @@ public class AllureAwareService extends TestNGService {
 		StartTestItemRQ rq = super.buildStartConfigurationRq(testResult, type);
 		getMethod(testResult.getMethod()).ifPresent(m -> {
 			processLabels(rq, m);
-			processLinks(rq, m);
 			processDescription(rq, Thread.currentThread().getContextClassLoader(), m);
+			processLinks(rq, m);
 		});
+		DESCRIPTION_TRACKER.put(testResult, rq.getDescription());
 		return rq;
 	}
 
@@ -83,6 +93,19 @@ public class AllureAwareService extends TestNGService {
 			processFlaky(rq, m);
 			processMuted(rq, m);
 		});
+		DESCRIPTION_TRACKER.put(testResult, rq.getDescription());
+		return rq;
+	}
+
+	@Override
+	@Nonnull
+	@SuppressWarnings("unchecked")
+	protected FinishTestItemRQ buildFinishTestMethodRq(ItemStatus status, ITestResult testResult) {
+		FinishTestItemRQ rq = super.buildFinishTestMethodRq(status, testResult);
+		Maybe<String> itemId = (Maybe<String>) testResult.getAttribute(TestNGService.RP_ID);
+		ofNullable(RuntimeAspect.retrieveRuntimeDescription(itemId)).ifPresent(d -> DESCRIPTION_TRACKER.put(testResult, d));
+		rq.setDescription(FormatUtils.appendLinks(DESCRIPTION_TRACKER.remove(testResult), RuntimeAspect.retrieveRuntimeLinks(itemId)));
+		rq.setAttributes(RuntimeAspect.retrieveRuntimeLabels(itemId));
 		return rq;
 	}
 }

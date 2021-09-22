@@ -17,47 +17,53 @@
 package com.epam.reportportal.testng;
 
 import com.epam.reportportal.allure.FormatUtils;
+import com.epam.reportportal.listeners.ItemType;
 import com.epam.reportportal.service.ReportPortal;
 import com.epam.reportportal.service.ReportPortalClient;
 import com.epam.reportportal.testng.features.TestMyFirstFeature;
 import com.epam.reportportal.testng.features.links.TestLinkAndDescription;
+import com.epam.reportportal.testng.features.links.TestLinkAndDescriptionBefore;
 import com.epam.reportportal.testng.util.TestNgListener;
 import com.epam.ta.reportportal.ws.model.StartTestItemRQ;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.testng.TestNG;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.epam.reportportal.testng.util.TestUtils.*;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.same;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 public class LinkAnnotationTest {
 
 	private final String suitedUuid = namedUuid("suite_");
 	private final String testClassUuid = namedUuid("class_");
-	private final String stepUuid = namedUuid("test_");
+	private final List<String> stepUuids = Stream.generate(() -> namedUuid("test_")).limit(2).collect(Collectors.toList());
 
 	private final ReportPortalClient client = mock(ReportPortalClient.class);
 
 	@BeforeEach
 	public void initMocks() {
-		mockLaunch(client, namedUuid("launchUuid"), suitedUuid, testClassUuid, stepUuid);
 		ReportPortal reportPortal = ReportPortal.create(client, standardParameters());
 		TestNgListener.REPORT_PORTAL_THREAD_LOCAL.set(reportPortal);
 	}
 
 	@Test
 	public void test_description_should_contain_attached_links() {
-		runTests(Collections.singletonList(TestNgListener.class), TestMyFirstFeature.class);
+		mockLaunch(client, namedUuid("launchUuid"), suitedUuid, testClassUuid, stepUuids.get(0));
+		TestNG result = runTests(Collections.singletonList(TestNgListener.class), TestMyFirstFeature.class);
+		assertThat(result.getStatus(), equalTo(0));
 
 		verify(client).startLaunch(any()); // Start launch
 		verify(client).startTestItem(any());  // Start parent suites
@@ -83,7 +89,9 @@ public class LinkAnnotationTest {
 
 	@Test
 	public void test_description_should_not_override_attached_links() {
-		runTests(TestLinkAndDescription.class);
+		mockLaunch(client, namedUuid("launchUuid"), suitedUuid, testClassUuid, stepUuids.get(0));
+		TestNG result = runTests(TestLinkAndDescription.class);
+		assertThat(result.getStatus(), equalTo(0));
 
 		ArgumentCaptor<StartTestItemRQ> startMethodCapture = ArgumentCaptor.forClass(StartTestItemRQ.class);
 		verify(client).startTestItem(same(testClassUuid), startMethodCapture.capture()); // Start test step
@@ -94,6 +102,30 @@ public class LinkAnnotationTest {
 						FormatUtils.LINK_MARKDOWN,
 						TestLinkAndDescription.LINK_NAME,
 						TestLinkAndDescription.LINK_URL
+				))
+		);
+	}
+
+	@Test
+	public void test_description_should_not_override_attached_links_in_configuration_method() {
+		mockLaunch(client, namedUuid("launchUuid"), suitedUuid, testClassUuid, stepUuids);
+		TestNG result = runTests(TestLinkAndDescriptionBefore.class);
+		assertThat(result.getStatus(), equalTo(0));
+
+		ArgumentCaptor<StartTestItemRQ> startMethodCapture = ArgumentCaptor.forClass(StartTestItemRQ.class);
+		verify(client, times(2)).startTestItem(same(testClassUuid), startMethodCapture.capture()); // Start test step
+
+		List<StartTestItemRQ> startBeforeRequests = startMethodCapture.getAllValues()
+				.stream()
+				.filter(s -> ItemType.BEFORE_METHOD.name().equals(s.getType()))
+				.collect(Collectors.toList());
+		assertThat(startBeforeRequests, hasSize(1));
+		StartTestItemRQ startRequest = startBeforeRequests.get(0);
+		assertThat(startRequest.getDescription(),
+				equalTo(TestLinkAndDescriptionBefore.DESCRIPTION + FormatUtils.MARKDOWN_DELIMITER + FormatUtils.LINK_PREFIX + String.format(
+						FormatUtils.LINK_MARKDOWN,
+						TestLinkAndDescriptionBefore.LINK_NAME,
+						TestLinkAndDescriptionBefore.LINK_URL
 				))
 		);
 	}
