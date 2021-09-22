@@ -23,6 +23,7 @@ import com.epam.reportportal.service.ReportPortal;
 import com.epam.ta.reportportal.ws.model.FinishTestItemRQ;
 import com.epam.ta.reportportal.ws.model.StartTestItemRQ;
 import io.reactivex.Maybe;
+import org.apache.commons.lang3.tuple.Pair;
 import org.testng.ITestContext;
 import org.testng.ITestNGMethod;
 import org.testng.ITestResult;
@@ -34,6 +35,7 @@ import javax.annotation.Nullable;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.epam.reportportal.allure.AnnotationUtils.*;
@@ -104,7 +106,8 @@ public class AllureAwareService extends TestNGService {
 		FinishTestItemRQ rq = super.buildFinishTestMethodRq(status, testResult);
 		Maybe<String> itemId = (Maybe<String>) testResult.getAttribute(TestNGService.RP_ID);
 		ofNullable(RuntimeAspect.retrieveRuntimeDescription(itemId)).ifPresent(d -> DESCRIPTION_TRACKER.put(testResult, d));
-		rq.setDescription(FormatUtils.appendLinks(DESCRIPTION_TRACKER.remove(testResult), RuntimeAspect.retrieveRuntimeLinks(itemId)));
+		Set<Pair<String, String>> links = RuntimeAspect.retrieveRuntimeLinks(itemId);
+		ofNullable(links).ifPresent(l -> rq.setDescription(FormatUtils.appendLinks(DESCRIPTION_TRACKER.remove(testResult), l)));
 		rq.setAttributes(RuntimeAspect.retrieveRuntimeLabels(itemId));
 		return rq;
 	}

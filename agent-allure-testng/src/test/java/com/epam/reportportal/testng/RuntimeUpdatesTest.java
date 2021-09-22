@@ -16,30 +16,27 @@
 
 package com.epam.reportportal.testng;
 
+import com.epam.reportportal.listeners.ItemStatus;
 import com.epam.reportportal.service.ReportPortal;
 import com.epam.reportportal.service.ReportPortalClient;
-import com.epam.reportportal.testng.features.TestMyFirstFeature;
+import com.epam.reportportal.testng.features.inline.TestAttributeAdd;
+import com.epam.reportportal.testng.features.inline.TestNoUpdatesDescription;
 import com.epam.reportportal.testng.util.TestNgListener;
-import com.epam.ta.reportportal.ws.model.StartTestItemRQ;
+import com.epam.ta.reportportal.ws.model.FinishTestItemRQ;
 import com.epam.ta.reportportal.ws.model.attribute.ItemAttributesRQ;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.testng.TestNG;
 
-import java.util.Collections;
-import java.util.Set;
-
 import static com.epam.reportportal.testng.util.TestUtils.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-public class LabelAnnotationTest {
-
+public class RuntimeUpdatesTest {
 	private final String suitedUuid = namedUuid("suite_");
 	private final String testClassUuid = namedUuid("class_");
 	private final String stepUuid = namedUuid("test_");
@@ -54,26 +51,32 @@ public class LabelAnnotationTest {
 	}
 
 	@Test
-	public void test_attributes_should_contain_attached_labels() {
-		TestNG result = runTests(TestMyFirstFeature.class);
+	public void test_no_updates_produces_no_additional_data() {
+		TestNG result = runTests(TestNoUpdatesDescription.class);
 		assertThat(result.getStatus(), equalTo(0));
 
-		verify(client).startLaunch(any()); // Start launch
-		verify(client).startTestItem(any());  // Start parent suites
-		ArgumentCaptor<StartTestItemRQ> startTestCapture = ArgumentCaptor.forClass(StartTestItemRQ.class);
-		verify(client).startTestItem(same(suitedUuid), startTestCapture.capture()); // Start test class
-		ArgumentCaptor<StartTestItemRQ> startMethodCapture = ArgumentCaptor.forClass(StartTestItemRQ.class);
-		verify(client).startTestItem(same(testClassUuid), startMethodCapture.capture()); // Start test step
+		ArgumentCaptor<FinishTestItemRQ> finishCaptor = ArgumentCaptor.forClass(FinishTestItemRQ.class);
+		verify(client).finishTestItem(same(stepUuid), finishCaptor.capture());
 
-		Set<ItemAttributesRQ> attributes = startTestCapture.getValue().getAttributes();
-		assertThat(attributes, hasSize(1));
-		assertThat(attributes.iterator().next(),
-				allOf(hasProperty("key", equalTo("feature")), hasProperty("value", equalTo("My feature")))
-		);
+		FinishTestItemRQ finishItemRequest = finishCaptor.getValue();
+		assertThat(finishItemRequest.getDescription(), nullValue());
+		assertThat(finishItemRequest.getAttributes(), nullValue());
+		assertThat(finishItemRequest.getStatus(), equalTo(ItemStatus.PASSED.name()));
+	}
 
-		attributes = startMethodCapture.getValue().getAttributes();
-		assertThat(attributes, hasSize(1));
-		assertThat(attributes.iterator().next(), allOf(hasProperty("key", equalTo("story")), hasProperty("value", equalTo("My story 1"))));
+	@Test
+	public void test_attribute_add_runtime() {
+		mockLogging(client);
+		TestNG result = runTests(TestAttributeAdd.class);
+		assertThat(result.getStatus(), equalTo(0));
 
+		ArgumentCaptor<FinishTestItemRQ> finishCaptor = ArgumentCaptor.forClass(FinishTestItemRQ.class);
+		verify(client).finishTestItem(same(stepUuid), finishCaptor.capture());
+
+		FinishTestItemRQ finishItemRequest = finishCaptor.getValue();
+		assertThat(finishItemRequest.getAttributes(), hasSize(1));
+		ItemAttributesRQ attribute = finishItemRequest.getAttributes().iterator().next();
+		assertThat(attribute.getKey(), equalTo("epic"));
+		assertThat(attribute.getValue(), equalTo(TestAttributeAdd.EPIC));
 	}
 }

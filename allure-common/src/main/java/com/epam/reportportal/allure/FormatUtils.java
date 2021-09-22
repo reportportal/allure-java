@@ -19,7 +19,6 @@ package com.epam.reportportal.allure;
 import io.qameta.allure.model.Link;
 import org.apache.commons.lang3.tuple.Pair;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
@@ -33,17 +32,20 @@ public class FormatUtils {
 	public static final String LINK_PREFIX = "Links:\n";
 	public static final String LINK_MARKDOWN = "[%s](%s)\n";
 
-	@Nonnull
+	@Nullable
 	public static String appendLinks(@Nullable String description, @Nullable Collection<Pair<String, String>> links) {
+		if (links == null || links.isEmpty()) {
+			return description;
+		}
 		StringBuilder builder = ofNullable(description).filter(d -> !d.isEmpty()).map(d -> {
 			StringBuilder sb = new StringBuilder(d);
 			sb.append(MARKDOWN_DELIMITER);
 			return sb;
 		}).orElseGet(StringBuilder::new);
 		builder.append(LINK_PREFIX);
-		ofNullable(links).ifPresent(ll -> ll.forEach(l -> builder.append(l.getValue() == null ?
+		links.forEach(l -> builder.append(l.getValue() == null ?
 				String.format(LINK_MARKDOWN, l.getKey(), l.getKey()) :
-				String.format(LINK_MARKDOWN, l.getKey(), l.getValue()))));
+				String.format(LINK_MARKDOWN, l.getKey(), l.getValue())));
 		return builder.toString();
 	}
 
