@@ -16,12 +16,11 @@
 
 package com.epam.reportportal.testng;
 
+import com.epam.reportportal.allure.FormatUtils;
 import com.epam.reportportal.listeners.ItemStatus;
 import com.epam.reportportal.service.ReportPortal;
 import com.epam.reportportal.service.ReportPortalClient;
-import com.epam.reportportal.testng.features.inline.TestAttributeAdd;
-import com.epam.reportportal.testng.features.inline.TestDescriptionAdd;
-import com.epam.reportportal.testng.features.inline.TestNoUpdatesDescription;
+import com.epam.reportportal.testng.features.inline.*;
 import com.epam.reportportal.testng.util.TestNgListener;
 import com.epam.ta.reportportal.ws.model.FinishTestItemRQ;
 import com.epam.ta.reportportal.ws.model.attribute.ItemAttributesRQ;
@@ -92,5 +91,82 @@ public class RuntimeUpdatesTest {
 
 		FinishTestItemRQ finishItemRequest = finishCaptor.getValue();
 		assertThat(finishItemRequest.getDescription(), equalTo(TestDescriptionAdd.DESCRIPTION));
+	}
+
+	@Test
+	public void test_description_html_add() {
+		mockLogging(client);
+		TestNG result = runTests(TestDescriptionHtmlAdd.class);
+		assertThat(result.getStatus(), equalTo(0));
+
+		ArgumentCaptor<FinishTestItemRQ> finishCaptor = ArgumentCaptor.forClass(FinishTestItemRQ.class);
+		verify(client).finishTestItem(same(stepUuid), finishCaptor.capture());
+
+		FinishTestItemRQ finishItemRequest = finishCaptor.getValue();
+		assertThat(finishItemRequest.getDescription(), equalTo(TestDescriptionHtmlAdd.DESCRIPTION));
+	}
+
+	@Test
+	public void test_description_html_override() {
+		mockLogging(client);
+		TestNG result = runTests(TestDescriptionHtmlOverride.class);
+		assertThat(result.getStatus(), equalTo(0));
+
+		ArgumentCaptor<FinishTestItemRQ> finishCaptor = ArgumentCaptor.forClass(FinishTestItemRQ.class);
+		verify(client).finishTestItem(same(stepUuid), finishCaptor.capture());
+
+		FinishTestItemRQ finishItemRequest = finishCaptor.getValue();
+		assertThat(finishItemRequest.getDescription(), equalTo(TestDescriptionHtmlOverride.DESCRIPTION_HTML));
+	}
+
+	@Test
+	public void test_description_override() {
+		mockLogging(client);
+		TestNG result = runTests(TestDescriptionOverride.class);
+		assertThat(result.getStatus(), equalTo(0));
+
+		ArgumentCaptor<FinishTestItemRQ> finishCaptor = ArgumentCaptor.forClass(FinishTestItemRQ.class);
+		verify(client).finishTestItem(same(stepUuid), finishCaptor.capture());
+
+		FinishTestItemRQ finishItemRequest = finishCaptor.getValue();
+		assertThat(finishItemRequest.getDescription(), equalTo(TestDescriptionOverride.DESCRIPTION));
+	}
+
+	@Test
+	public void test_link_with_annotation_description_set() {
+		mockLogging(client);
+		TestNG result = runTests(TestLinkAddDescription.class);
+		assertThat(result.getStatus(), equalTo(0));
+
+		ArgumentCaptor<FinishTestItemRQ> finishCaptor = ArgumentCaptor.forClass(FinishTestItemRQ.class);
+		verify(client).finishTestItem(same(stepUuid), finishCaptor.capture());
+
+		FinishTestItemRQ finishItemRequest = finishCaptor.getValue();
+		assertThat(finishItemRequest.getDescription(),
+				equalTo(TestLinkAddDescription.DESCRIPTION + FormatUtils.MARKDOWN_DELIMITER + FormatUtils.LINK_PREFIX + String.format(
+						FormatUtils.LINK_MARKDOWN,
+						TestLinkAddDescription.LINK_NAME,
+						TestLinkAddDescription.LINK_URL
+				))
+		);
+	}
+
+	@Test
+	public void test_link_with_no_description_set() {
+		mockLogging(client);
+		TestNG result = runTests(TestLinkAddNoDescription.class);
+		assertThat(result.getStatus(), equalTo(0));
+
+		ArgumentCaptor<FinishTestItemRQ> finishCaptor = ArgumentCaptor.forClass(FinishTestItemRQ.class);
+		verify(client).finishTestItem(same(stepUuid), finishCaptor.capture());
+
+		FinishTestItemRQ finishItemRequest = finishCaptor.getValue();
+		assertThat(finishItemRequest.getDescription(),
+				equalTo(FormatUtils.LINK_PREFIX + String.format(
+						FormatUtils.LINK_MARKDOWN,
+						TestLinkAddNoDescription.LINK_NAME,
+						TestLinkAddNoDescription.LINK_URL
+				))
+		);
 	}
 }
