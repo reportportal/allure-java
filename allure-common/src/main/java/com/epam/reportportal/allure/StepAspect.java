@@ -56,17 +56,14 @@ public class StepAspect {
 
 	@Pointcut("@annotation(step)")
 	public void withStepAnnotation(Step step) {
-
 	}
 
 	@Pointcut("execution(* *.*(..))")
 	public void anyMethod() {
-
 	}
 
 	@Pointcut("execution(public static * io.qameta.allure.Allure.step(..))")
 	public void stepMethod() {
-
 	}
 
 	@Before(value = "!stepMethod() && (anyMethod() && withStepAnnotation(step))", argNames = "joinPoint,step")
