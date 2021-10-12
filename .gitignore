@@ -35,3 +35,4 @@ build/
 /bin/
 /out
 **/test-output/
+**/allure-results/

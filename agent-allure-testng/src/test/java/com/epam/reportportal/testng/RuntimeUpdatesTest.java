@@ -20,7 +20,7 @@ import com.epam.reportportal.allure.FormatUtils;
 import com.epam.reportportal.listeners.ItemStatus;
 import com.epam.reportportal.service.ReportPortal;
 import com.epam.reportportal.service.ReportPortalClient;
-import com.epam.reportportal.testng.features.inline.*;
+import com.epam.reportportal.testng.features.runtime.*;
 import com.epam.reportportal.testng.util.TestNgListener;
 import com.epam.ta.reportportal.ws.model.FinishTestItemRQ;
 import com.epam.ta.reportportal.ws.model.attribute.ItemAttributesRQ;
@@ -166,6 +166,25 @@ public class RuntimeUpdatesTest {
 						FormatUtils.LINK_MARKDOWN,
 						TestLinkAddNoDescription.LINK_NAME,
 						TestLinkAddNoDescription.LINK_URL
+				))
+		);
+	}
+
+	@Test
+	public void test_link_with_no_name_set() {
+		mockLogging(client);
+		TestNG result = runTests(TestLinkAddNoName.class);
+		assertThat(result.getStatus(), equalTo(0));
+
+		ArgumentCaptor<FinishTestItemRQ> finishCaptor = ArgumentCaptor.forClass(FinishTestItemRQ.class);
+		verify(client).finishTestItem(same(stepUuid), finishCaptor.capture());
+
+		FinishTestItemRQ finishItemRequest = finishCaptor.getValue();
+		assertThat(finishItemRequest.getDescription(),
+				equalTo(FormatUtils.LINK_PREFIX + String.format(
+						FormatUtils.LINK_MARKDOWN,
+						TestLinkAddNoName.LINK_URL,
+						TestLinkAddNoName.LINK_URL
 				))
 		);
 	}

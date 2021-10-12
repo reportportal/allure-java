@@ -1,4 +1,4 @@
-package com.epam.reportportal.testng.features.inline;
+package com.epam.reportportal.testng.features.runtime;
 
 import io.qameta.allure.Allure;
 import org.testng.annotations.Test;

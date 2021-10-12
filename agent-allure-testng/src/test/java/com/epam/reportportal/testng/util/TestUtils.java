@@ -189,23 +189,24 @@ public class TestUtils {
 		return logCaptor.getAllValues().stream().flatMap(l -> extractJsonParts(l).stream()).filter(filter).collect(Collectors.toList());
 	}
 
-	public static void verifyLogged(@Nonnull final ArgumentCaptor<List<MultipartBody.Part>> logCaptor, @Nullable final String itemId,
+	public static SaveLogRQ verifyLogged(@Nonnull final ArgumentCaptor<List<MultipartBody.Part>> logCaptor, @Nullable final String itemId,
 			@Nonnull final LogLevel level, @Nonnull final String message) {
-		verifyLogged(logCaptor, Collections.singletonList(Triple.of(itemId, level, message)));
+		return verifyLogged(logCaptor, Collections.singletonList(Triple.of(itemId, level, message))).get(0);
 	}
 
-	public static void verifyLogged(@Nonnull final ArgumentCaptor<List<MultipartBody.Part>> logCaptor,
+	public static List<SaveLogRQ> verifyLogged(@Nonnull final ArgumentCaptor<List<MultipartBody.Part>> logCaptor,
 			Collection<Triple<String, LogLevel, String>> messages) {
-		List<SaveLogRQ> expectedErrorList = filterLogs(
+		List<SaveLogRQ> logList = filterLogs(
 				logCaptor,
 				l -> messages.stream()
 						.anyMatch(e -> e.getMiddle().name().equals(l.getLevel()) && l.getMessage() != null && l.getMessage()
 								.contains(e.getRight()))
 		);
-		assertThat(expectedErrorList, hasSize(messages.size()));
+		assertThat(logList, hasSize(messages.size()));
 		assertThat(
-				expectedErrorList.stream().map(SaveLogRQ::getItemUuid).collect(Collectors.toList()),
+				logList.stream().map(SaveLogRQ::getItemUuid).collect(Collectors.toList()),
 				containsInAnyOrder(messages.stream().map(Triple::getLeft).toArray())
 		);
+		return logList;
 	}
 }

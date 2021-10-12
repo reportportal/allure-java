@@ -47,8 +47,9 @@ public class RuntimeAspect {
 
 	@Before(value = "linkMethod()")
 	public void addLink(JoinPoint joinPoint) {
-		String name = (String) joinPoint.getArgs()[0];
-		String url = (String) joinPoint.getArgs()[2];
+		Object[] args = joinPoint.getArgs();
+		String url = args[2].toString();
+		String name = ofNullable(args[0]).map(Object::toString).orElse(url);
 		ofNullable(Launch.currentLaunch()).map(l -> l.getStepReporter().getParent())
 				.ifPresent(p -> LINK_MAP.computeIfAbsent(p, k -> Collections.newSetFromMap(new ConcurrentHashMap<>()))
 						.add(Pair.of(name, url)));
