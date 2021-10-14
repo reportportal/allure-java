@@ -14,6 +14,15 @@
  * limitations under the License.
  */
 
-include 'allure-common'
-include 'agent-allure-testng'
-include 'agent-allure-junit5'
+package com.epam.reportportal.junit5.features.description;
+
+import io.qameta.allure.Description;
+import org.junit.jupiter.api.Test;
+
+public class TestDescriptionAnnotation {
+
+	@Test
+	@Description("My test description")
+	public void simpleTest1() {
+	}
+}

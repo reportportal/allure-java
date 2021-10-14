@@ -14,6 +14,26 @@
  * limitations under the License.
  */
 
-include 'allure-common'
-include 'agent-allure-testng'
-include 'agent-allure-junit5'
+package com.epam.reportportal.junit5.features.steps;
+
+import io.qameta.allure.Step;
+import org.junit.jupiter.api.Test;
+
+public class MethodTwoSteps {
+
+	@Step
+	public void myNestedStep1() {
+
+	}
+
+	@Step
+	public void myNestedStep2() {
+
+	}
+
+	@Test
+	public void stepTest1() {
+		myNestedStep1();
+		myNestedStep2();
+	}
+}

@@ -14,6 +14,15 @@
  * limitations under the License.
  */
 
-include 'allure-common'
-include 'agent-allure-testng'
-include 'agent-allure-junit5'
+package com.epam.reportportal.junit5.features.flaky;
+
+import io.qameta.allure.Flaky;
+import org.junit.jupiter.api.Test;
+
+public class TestFlakyMethodLevel {
+
+	@Test
+	@Flaky
+	public void simpleTest1() {
+	}
+}

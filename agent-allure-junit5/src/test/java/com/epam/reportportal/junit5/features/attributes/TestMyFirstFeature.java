@@ -14,6 +14,21 @@
  * limitations under the License.
  */
 
-include 'allure-common'
-include 'agent-allure-testng'
-include 'agent-allure-junit5'
+package com.epam.reportportal.junit5.features.attributes;
+
+import io.qameta.allure.Feature;
+import io.qameta.allure.Link;
+import io.qameta.allure.Story;
+import org.junit.jupiter.api.Test;
+
+@Link("https://example.com/class")
+@Feature("My feature")
+public class TestMyFirstFeature {
+
+	@Test
+	@Link("https://example.com")
+	@Link(name = "Test Case Link", url = "https://example.com/test/case")
+	@Story("My story 1")
+	public void simpleTest1() {
+	}
+}

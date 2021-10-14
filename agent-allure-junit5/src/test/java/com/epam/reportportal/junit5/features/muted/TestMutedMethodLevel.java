@@ -14,6 +14,15 @@
  * limitations under the License.
  */
 
-include 'allure-common'
-include 'agent-allure-testng'
-include 'agent-allure-junit5'
+package com.epam.reportportal.junit5.features.muted;
+
+import io.qameta.allure.Muted;
+import org.junit.jupiter.api.Test;
+
+public class TestMutedMethodLevel {
+
+	@Test
+	@Muted
+	public void mutedTest2() {
+	}
+}

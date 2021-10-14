@@ -14,6 +14,16 @@
  * limitations under the License.
  */
 
-include 'allure-common'
-include 'agent-allure-testng'
-include 'agent-allure-junit5'
+package com.epam.reportportal.junit5.features.priority;
+
+import io.qameta.allure.Severity;
+import io.qameta.allure.SeverityLevel;
+import org.junit.jupiter.api.Test;
+
+@Severity(SeverityLevel.CRITICAL)
+public class TestPriorityClassLevel {
+
+	@Test
+	public void simpleTest1() {
+	}
+}

@@ -14,6 +14,16 @@
  * limitations under the License.
  */
 
-include 'allure-common'
-include 'agent-allure-testng'
-include 'agent-allure-junit5'
+package com.epam.reportportal.junit5.features.links;
+
+import io.qameta.allure.Allure;
+import org.junit.jupiter.api.Test;
+
+public class TestLinkAddNoName {
+	public static final String LINK_URL = "https://example.com/test";
+
+	@Test
+	public void simpleTest1() {
+		Allure.link(LINK_URL);
+	}
+}

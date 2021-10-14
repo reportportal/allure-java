@@ -14,6 +14,22 @@
  * limitations under the License.
  */
 
-include 'allure-common'
-include 'agent-allure-testng'
-include 'agent-allure-junit5'
+package com.epam.reportportal.junit5.features.attachments;
+
+import io.qameta.allure.Allure;
+import org.junit.jupiter.api.Test;
+
+import static java.util.Optional.ofNullable;
+
+public class ImageDirectAttachment {
+	public static final String ATTACHMENT_NAME = "Lucky Pug";
+
+	@Test
+	public void stepTest1() {
+		Allure.addAttachment(
+				ATTACHMENT_NAME,
+				ofNullable(getClass().getClassLoader().getResourceAsStream("pug/lucky.jpg")).orElseThrow(() -> new IllegalStateException(
+						"Image file not found"))
+		);
+	}
+}
