@@ -18,7 +18,7 @@ package com.epam.reportportal.testng;
 
 import com.epam.reportportal.service.ReportPortal;
 import com.epam.reportportal.service.ReportPortalClient;
-import com.epam.reportportal.testng.features.TestMyFirstFeature;
+import com.epam.reportportal.testng.features.attributes.TestMyFirstFeature;
 import com.epam.reportportal.testng.util.TestNgListener;
 import com.epam.ta.reportportal.ws.model.StartTestItemRQ;
 import com.epam.ta.reportportal.ws.model.attribute.ItemAttributesRQ;
@@ -27,7 +27,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.testng.TestNG;
 
-import java.util.Collections;
 import java.util.Set;
 
 import static com.epam.reportportal.testng.util.TestUtils.*;

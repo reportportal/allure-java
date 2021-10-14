@@ -1,7 +1,7 @@
-package com.epam.reportportal.testng.features.runtime;
+package com.epam.reportportal.junit5.features.description;
 
 import io.qameta.allure.Allure;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestDescriptionAdd {
 	public static final String DESCRIPTION = "My test description";

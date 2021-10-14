@@ -20,7 +20,7 @@ import com.epam.reportportal.allure.FormatUtils;
 import com.epam.reportportal.listeners.ItemType;
 import com.epam.reportportal.service.ReportPortal;
 import com.epam.reportportal.service.ReportPortalClient;
-import com.epam.reportportal.testng.features.TestMyFirstFeature;
+import com.epam.reportportal.testng.features.attributes.TestMyFirstFeature;
 import com.epam.reportportal.testng.features.links.TestLinkAndDescription;
 import com.epam.reportportal.testng.features.links.TestLinkAndDescriptionBefore;
 import com.epam.reportportal.testng.util.TestNgListener;
