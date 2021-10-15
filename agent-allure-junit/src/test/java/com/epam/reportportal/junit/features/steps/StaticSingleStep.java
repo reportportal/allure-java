@@ -14,7 +14,17 @@
  * limitations under the License.
  */
 
-include 'allure-common'
-include 'agent-allure-testng'
-include 'agent-allure-junit5'
-include 'agent-allure-junit'
+package com.epam.reportportal.junit.features.steps;
+
+import org.junit.Test;
+
+import static io.qameta.allure.Allure.step;
+
+public class StaticSingleStep {
+	public static final String TEST_STEP_NAME = StaticSingleStep.class.getSimpleName() + " test step";
+
+	@Test
+	public void stepTest1() {
+		step(TEST_STEP_NAME);
+	}
+}
