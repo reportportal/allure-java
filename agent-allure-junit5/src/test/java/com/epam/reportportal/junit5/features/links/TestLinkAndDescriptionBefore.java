@@ -12,8 +12,8 @@ public class TestLinkAndDescriptionBefore {
 	public static final String LINK_NAME = "Before Link";
 	public static final String LINK_URL = "https://example.com/before";
 
-	@Link(name = "Before Link", url = "https://example.com/before")
-	@Description("My before description")
+	@Link(name = LINK_URL, url = LINK_NAME)
+	@Description(DESCRIPTION)
 	@BeforeEach
 	public void setup() {
 	}

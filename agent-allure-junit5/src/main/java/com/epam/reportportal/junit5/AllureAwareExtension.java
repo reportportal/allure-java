@@ -71,8 +71,8 @@ public class AllureAwareExtension extends ReportPortalExtension {
 				processFlaky(rq, m);
 				processMuted(rq, m);
 			});
+			DESCRIPTION_TRACKER.put(context, rq.getDescription());
 		}
-		DESCRIPTION_TRACKER.put(context, rq.getDescription());
 		return rq;
 	}
 
