@@ -20,7 +20,7 @@ dependencies {
 
     testImplementation 'io.qameta.allure:allure-java-commons:2.14.0'
     testImplementation 'ch.qos.logback:logback-classic:1.2.3'
-    testImplementation 'com.epam.reportportal:logger-java-logback:5.0.3'
+    testImplementation 'com.epam.reportportal:logger-java-logback:5.1.0-RC-1'
 }
 
 test {
