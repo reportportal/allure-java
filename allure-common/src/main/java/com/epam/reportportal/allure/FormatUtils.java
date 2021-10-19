@@ -32,6 +32,10 @@ public class FormatUtils {
 	public static final String LINK_PREFIX = "Links:\n";
 	public static final String LINK_MARKDOWN = "[%s](%s)\n";
 
+	private FormatUtils() {
+		throw new IllegalStateException("Utility class instantiation");
+	}
+
 	@Nullable
 	public static String appendLinks(@Nullable String description, @Nullable Collection<Pair<String, String>> links) {
 		if (links == null || links.isEmpty()) {

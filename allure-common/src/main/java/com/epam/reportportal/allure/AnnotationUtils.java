@@ -43,6 +43,10 @@ import static java.util.Optional.ofNullable;
 public class AnnotationUtils {
 	public static final String MARKDOWN_DELIMITER = "\n\n---\n\n";
 
+	private AnnotationUtils() {
+		throw new IllegalStateException("Utility class instantiation");
+	}
+
 	public static void processLinks(@Nonnull StartTestItemRQ rq, @Nullable AnnotatedElement source) {
 		ofNullable(source).map(io.qameta.allure.util.AnnotationUtils::getLinks)
 				.filter(l -> !l.isEmpty())
