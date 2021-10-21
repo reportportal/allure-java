@@ -16,17 +16,25 @@
 
 package com.epam.reportportal.jbehave;
 
+import com.epam.reportportal.allure.FormatUtils;
+import com.epam.reportportal.allure.RuntimeAspect;
+import com.epam.ta.reportportal.ws.model.FinishTestItemRQ;
 import com.epam.ta.reportportal.ws.model.StartTestItemRQ;
+import io.reactivex.Maybe;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jbehave.core.model.Meta;
 import org.jbehave.core.model.Scenario;
 import org.jbehave.core.model.Story;
 
+import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.epam.reportportal.allure.BddUtils.processLinks;
 import static com.epam.reportportal.allure.BddUtils.processMuted;
+import static java.util.Optional.ofNullable;
 
 public class AllureAwareReporter {
 
@@ -47,6 +55,18 @@ public class AllureAwareReporter {
 		List<Pair<String, String>> properties = toMap(scenario.getMeta());
 		processLinks(rq, properties);
 		processMuted(rq, properties);
+		return rq;
+	}
+
+	public static FinishTestItemRQ processFinishDescription(@Nonnull final Maybe<String> id, @Nonnull final FinishTestItemRQ rq,
+			@Nonnull final Map<Maybe<String>, String> descriptionTracker) {
+		ofNullable(RuntimeAspect.retrieveRuntimeDescription(id)).ifPresent(d -> {
+			descriptionTracker.put(id, d);
+			rq.setDescription(d);
+		});
+		Set<Pair<String, String>> links = RuntimeAspect.retrieveRuntimeLinks(id);
+		ofNullable(links).ifPresent(l -> rq.setDescription(FormatUtils.appendLinks(descriptionTracker.remove(id), l)));
+		rq.setAttributes(RuntimeAspect.retrieveRuntimeLabels(id));
 		return rq;
 	}
 }

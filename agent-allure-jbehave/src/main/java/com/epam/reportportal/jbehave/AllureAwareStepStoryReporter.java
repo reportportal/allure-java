@@ -16,9 +16,14 @@
 
 package com.epam.reportportal.jbehave;
 
+import com.epam.reportportal.listeners.ItemStatus;
+import com.epam.reportportal.listeners.ItemType;
 import com.epam.reportportal.service.Launch;
 import com.epam.reportportal.service.tree.TestItemTree;
+import com.epam.ta.reportportal.ws.model.FinishTestItemRQ;
 import com.epam.ta.reportportal.ws.model.StartTestItemRQ;
+import com.epam.ta.reportportal.ws.model.issue.Issue;
+import io.reactivex.Maybe;
 import org.jbehave.core.model.Scenario;
 import org.jbehave.core.model.Story;
 
@@ -29,11 +34,10 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
-import static com.epam.reportportal.jbehave.AllureAwareReporter.processStartScenarioRq;
-import static com.epam.reportportal.jbehave.AllureAwareReporter.processStartSuiteRq;
+import static com.epam.reportportal.jbehave.AllureAwareReporter.*;
 
 public class AllureAwareStepStoryReporter extends ReportPortalStepStoryReporter {
-	private static final Map<Object, String> DESCRIPTION_TRACKER = new ConcurrentHashMap<>();
+	private static final Map<Maybe<String>, String> DESCRIPTION_TRACKER = new ConcurrentHashMap<>();
 
 	public AllureAwareStepStoryReporter(Supplier<Launch> launchSupplier, TestItemTree testItemTree) {
 		super(launchSupplier, testItemTree);
@@ -41,17 +45,32 @@ public class AllureAwareStepStoryReporter extends ReportPortalStepStoryReporter 
 
 	@Override
 	@Nonnull
-	protected StartTestItemRQ buildStartStoryRq(@Nonnull Story story, @Nonnull String codeRef, @Nullable final Date startTime) {
-		StartTestItemRQ rq = processStartSuiteRq(story, super.buildStartStoryRq(story, codeRef, startTime));
-		DESCRIPTION_TRACKER.put(story, rq.getDescription());
-		return rq;
+	protected TestItemTree.TestItemLeaf createLeaf(@Nonnull final ItemType type, @Nonnull final StartTestItemRQ rq,
+			@Nullable final TestItemTree.TestItemLeaf parent) {
+		TestItemTree.TestItemLeaf result = super.createLeaf(type, rq, parent);
+		if (ItemType.STORY == type || ItemType.SCENARIO == type) {
+			DESCRIPTION_TRACKER.put(result.getItemId(), rq.getDescription());
+		}
+		return result;
 	}
 
 	@Override
 	@Nonnull
-	protected StartTestItemRQ buildStartScenarioRq(@Nonnull Scenario scenario, @Nonnull String codeRef, @Nullable final Date startTime) {
-		StartTestItemRQ rq = processStartScenarioRq(scenario, super.buildStartScenarioRq(scenario, codeRef, startTime));
-		DESCRIPTION_TRACKER.put(scenario, rq.getDescription());
-		return rq;
+	protected StartTestItemRQ buildStartStoryRq(@Nonnull final Story story, @Nonnull String codeRef, @Nullable final Date startTime) {
+		return processStartSuiteRq(story, super.buildStartStoryRq(story, codeRef, startTime));
+	}
+
+	@Override
+	@Nonnull
+	protected StartTestItemRQ buildStartScenarioRq(@Nonnull final Scenario scenario, @Nonnull String codeRef,
+			@Nullable final Date startTime) {
+		return processStartScenarioRq(scenario, super.buildStartScenarioRq(scenario, codeRef, startTime));
+	}
+
+	@Override
+	@Nonnull
+	protected FinishTestItemRQ buildFinishTestItemRequest(@Nonnull final Maybe<String> id, @Nullable final ItemStatus status,
+			@Nullable Issue issue) {
+		return processFinishDescription(id, super.buildFinishTestItemRequest(id, status, issue), DESCRIPTION_TRACKER);
 	}
 }
