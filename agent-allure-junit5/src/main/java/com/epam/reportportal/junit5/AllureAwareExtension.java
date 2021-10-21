@@ -47,7 +47,7 @@ public class AllureAwareExtension extends ReportPortalExtension {
 		processLabels(rq, method);
 		processDescription(rq, Thread.currentThread().getContextClassLoader(), method);
 		processLinks(rq, method);
-		DESCRIPTION_TRACKER.put(context, rq.getDescription());
+		ofNullable(rq.getDescription()).ifPresent(d -> DESCRIPTION_TRACKER.put(context, d));
 		return rq;
 	}
 

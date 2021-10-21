@@ -67,7 +67,7 @@ public class AllureAwareListener extends ReportPortalListener {
 				processLinks(rq, m);
 			});
 		}
-		DESCRIPTION_TRACKER.put(method, rq.getDescription());
+		ofNullable(rq.getDescription()).ifPresent(d -> DESCRIPTION_TRACKER.put(method, d));
 		return rq;
 	}
 

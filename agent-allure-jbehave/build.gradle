@@ -37,9 +37,3 @@ test {
         exceptionFormat "full"
     }
 }
-
-jar {
-    from("src/main/services") {
-        into("META-INF/services")
-    }
-}

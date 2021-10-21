@@ -78,7 +78,7 @@ public class AllureAwareService extends TestNGService {
 			processDescription(rq, Thread.currentThread().getContextClassLoader(), m);
 			processLinks(rq, m);
 		});
-		DESCRIPTION_TRACKER.put(testResult, rq.getDescription());
+		ofNullable(rq.getDescription()).ifPresent(d -> DESCRIPTION_TRACKER.put(testResult, d));
 		return rq;
 	}
 
@@ -95,7 +95,7 @@ public class AllureAwareService extends TestNGService {
 			processFlaky(rq, m);
 			processMuted(rq, m);
 		});
-		DESCRIPTION_TRACKER.put(testResult, rq.getDescription());
+		ofNullable(rq.getDescription()).ifPresent(d -> DESCRIPTION_TRACKER.put(testResult, d));
 		return rq;
 	}
 

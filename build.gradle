@@ -23,7 +23,6 @@ allprojects {
 
 subprojects {
     apply plugin: 'java-library'
-    apply from: "${project.scripts_url}/${project.scripts_branch}/jacoco.gradle"
 
     project.ext.limits = [
             'instruction': 70,
@@ -49,6 +48,4 @@ subprojects {
         testImplementation "org.mockito:mockito-core:${mockito_version}"
         testImplementation "org.mockito:mockito-junit-jupiter:${mockito_version}"
     }
-
-    build.dependsOn jacocoTestReport
 }

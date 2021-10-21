@@ -35,6 +35,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
 import static com.epam.reportportal.jbehave.AllureAwareReporter.*;
+import static java.util.Optional.ofNullable;
 
 public class AllureAwareStepStoryReporter extends ReportPortalStepStoryReporter {
 	private static final Map<Maybe<String>, String> DESCRIPTION_TRACKER = new ConcurrentHashMap<>();
@@ -49,7 +50,7 @@ public class AllureAwareStepStoryReporter extends ReportPortalStepStoryReporter 
 			@Nullable final TestItemTree.TestItemLeaf parent) {
 		TestItemTree.TestItemLeaf result = super.createLeaf(type, rq, parent);
 		if (ItemType.STORY == type || ItemType.SCENARIO == type) {
-			DESCRIPTION_TRACKER.put(result.getItemId(), rq.getDescription());
+			ofNullable(rq.getDescription()).ifPresent(d -> DESCRIPTION_TRACKER.put(result.getItemId(), d));
 		}
 		return result;
 	}
