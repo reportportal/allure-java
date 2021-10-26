@@ -65,6 +65,11 @@ public class StoryMetaTest extends BaseTest {
 		add(Pair.of("tmsLink", "TMS-4321"));
 	}};
 
+	private static final Set<String> SUITE_DESCRIPTION_LINKS = new HashSet<String>() {{
+		add("https://example.com/issue/IS-1234");
+		add("https://example.com/tms/TMS-4321");
+	}};
+
 	@Test
 	public void verify_a_story_with_meta_attributes() {
 		run(format, STORY_PATH, new EmptySteps());
@@ -83,5 +88,8 @@ public class StoryMetaTest extends BaseTest {
 
 		StartTestItemRQ startScenario = items.get(1);
 		assertThat(startScenario.getAttributes(), empty());
+
+		String description = startSuite.getDescription();
+		SUITE_DESCRIPTION_LINKS.forEach(d->assertThat(description, containsString(d)));
 	}
 }

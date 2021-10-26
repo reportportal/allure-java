@@ -49,12 +49,14 @@ public class BddUtils {
 			synchronized (BddUtils.class) {
 				if (allureProperties == null) {
 					Properties properties = new Properties();
-					try {
-						properties.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("allure.properties"));
 
-					} catch (IOException e) {
-						LOGGER.warn("Unable to load pattern property file");
-					}
+					ofNullable(Thread.currentThread().getContextClassLoader().getResourceAsStream("allure.properties")).ifPresent(is -> {
+						try {
+							properties.load(is);
+						} catch (IOException e) {
+							LOGGER.warn("Unable to load pattern property file");
+						}
+					});
 					Map<String, String> propertyMap = new HashMap<>();
 					properties.forEach((k, v) -> propertyMap.put(k.toString(), v.toString()));
 					allureProperties = Collections.unmodifiableMap(propertyMap);

@@ -14,9 +14,16 @@
  * limitations under the License.
  */
 
-include 'allure-common'
-include 'agent-allure-testng'
-include 'agent-allure-junit5'
-include 'agent-allure-junit'
-include 'agent-allure-jbehave'
-include 'agent-allure-cucumber'
+package com.epam.reportportal.cucumber.integration;
+
+import com.epam.reportportal.cucumber.AllureAwareStepReporter;
+import com.epam.reportportal.service.ReportPortal;
+
+public class TestStepReporter extends AllureAwareStepReporter {
+	public static final ThreadLocal<ReportPortal> RP = new ThreadLocal<>();
+
+	@Override
+	protected ReportPortal buildReportPortal() {
+		return RP.get();
+	}
+}
