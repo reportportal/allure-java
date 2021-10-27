@@ -53,12 +53,12 @@ public class AllureAwareScenarioReporter extends ScenarioReporter {
 	@Override
 	@Nonnull
 	protected StartTestItemRQ buildStartFeatureRequest(@Nonnull Feature feature, @Nonnull String uri) {
-		return processStartFeatureRequest(feature, uri, super.buildStartFeatureRequest(feature, uri));
+		return processStartFeatureRequest(feature, super.buildStartFeatureRequest(feature, uri));
 	}
 
 	@Nonnull
 	protected StartTestItemRQ buildStartScenarioRequest(@Nonnull Scenario scenario, @Nonnull String uri) {
-		return processStartScenarioRequest(scenario, uri, super.buildStartScenarioRequest(scenario, uri));
+		return processStartScenarioRequest(scenario, super.buildStartScenarioRequest(scenario, uri));
 	}
 
 	@Nonnull

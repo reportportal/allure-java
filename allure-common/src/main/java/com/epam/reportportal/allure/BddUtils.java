@@ -17,6 +17,7 @@
 package com.epam.reportportal.allure;
 
 import com.epam.ta.reportportal.ws.model.StartTestItemRQ;
+import com.epam.ta.reportportal.ws.model.attribute.ItemAttributesRQ;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +50,6 @@ public class BddUtils {
 			synchronized (BddUtils.class) {
 				if (allureProperties == null) {
 					Properties properties = new Properties();
-
 					ofNullable(Thread.currentThread().getContextClassLoader().getResourceAsStream("allure.properties")).ifPresent(is -> {
 						try {
 							properties.load(is);
@@ -83,5 +83,19 @@ public class BddUtils {
 
 	public static void processMuted(@Nonnull StartTestItemRQ rq, @Nonnull Collection<Pair<String, String>> properties) {
 		properties.stream().filter(p -> MUTED_TAG.equals(p.getKey())).findAny().ifPresent(p -> rq.setHasStats(false));
+	}
+
+	public static void splitKeyValueAttributes(@Nonnull StartTestItemRQ rq, @Nonnull Set<String> attributesToSplit, char keyValueDelimiter) {
+		rq.setAttributes(ofNullable(rq.getAttributes()).orElse(Collections.emptySet()).stream().map(a -> {
+			String value = a.getValue();
+			int valueDelimiterIdx = ofNullable(value).map(av -> av.indexOf(keyValueDelimiter)).orElse(-1);
+			if (valueDelimiterIdx > 0) {
+				String key = value.substring(1, valueDelimiterIdx);
+				if (attributesToSplit.contains(key)) {
+					return new ItemAttributesRQ(key, value.substring(valueDelimiterIdx + 1));
+				}
+			}
+			return a;
+		}).collect(Collectors.toSet()));
 	}
 }

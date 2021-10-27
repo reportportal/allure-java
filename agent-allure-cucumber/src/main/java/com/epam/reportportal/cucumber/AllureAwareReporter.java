@@ -21,7 +21,6 @@ import com.epam.reportportal.allure.FormatUtils;
 import com.epam.reportportal.allure.RuntimeAspect;
 import com.epam.ta.reportportal.ws.model.FinishTestItemRQ;
 import com.epam.ta.reportportal.ws.model.StartTestItemRQ;
-import com.epam.ta.reportportal.ws.model.attribute.ItemAttributesRQ;
 import gherkin.formatter.model.Feature;
 import gherkin.formatter.model.Scenario;
 import gherkin.formatter.model.Tag;
@@ -56,35 +55,19 @@ public abstract class AllureAwareReporter {
 		}).collect(Collectors.toList());
 	}
 
-	private static void replaceAttributes(@Nonnull StartTestItemRQ rq) {
-		rq.setAttributes(ofNullable(rq.getAttributes()).orElse(Collections.emptySet()).stream().map(a -> {
-			String value = a.getValue();
-			int valueDelimiterIdx = ofNullable(value).map(av -> av.indexOf(ALLURE_VALUE_DELIMITER)).orElse(-1);
-			if (valueDelimiterIdx > 0) {
-				String key = value.substring(1, valueDelimiterIdx);
-				if (ATTRIBUTE_REPLACE_SET.contains(key)) {
-					return new ItemAttributesRQ(key, value.substring(valueDelimiterIdx + 1));
-				}
-			}
-			return a;
-		}).collect(Collectors.toSet()));
-	}
-
-	@SuppressWarnings("unused")
 	@Nonnull
-	public static StartTestItemRQ processStartFeatureRequest(@Nonnull Feature feature, @Nonnull String uri, @Nonnull StartTestItemRQ rq) {
+	public static StartTestItemRQ processStartFeatureRequest(@Nonnull Feature feature, @Nonnull StartTestItemRQ rq) {
 		BddUtils.processLinks(rq, toMap(feature));
-		replaceAttributes(rq);
+		BddUtils.splitKeyValueAttributes(rq, ATTRIBUTE_REPLACE_SET, ALLURE_VALUE_DELIMITER);
 		return rq;
 	}
 
-	@SuppressWarnings("unused")
 	@Nonnull
-	public static StartTestItemRQ processStartScenarioRequest(@Nonnull Scenario scenario, @Nonnull String uri,
-			@Nonnull StartTestItemRQ rq) {
-		BddUtils.processLinks(rq, toMap(scenario));
-		BddUtils.processMuted(rq, toMap(scenario));
-		replaceAttributes(rq);
+	public static StartTestItemRQ processStartScenarioRequest(@Nonnull Scenario scenario, @Nonnull StartTestItemRQ rq) {
+		List<Pair<String, String>> parameters = toMap(scenario);
+		BddUtils.processLinks(rq, parameters);
+		BddUtils.processMuted(rq, parameters);
+		BddUtils.splitKeyValueAttributes(rq, ATTRIBUTE_REPLACE_SET, ALLURE_VALUE_DELIMITER);
 		return rq;
 	}
 
