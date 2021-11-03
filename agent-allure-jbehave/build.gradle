@@ -18,6 +18,7 @@ dependencies {
     api 'com.epam.reportportal:agent-java-jbehave:5.1.0-RC-3'
     shadow project(':allure-common')
 
+    testImplementation project(':allure-common')
     testImplementation 'io.qameta.allure:allure-java-commons:2.14.0'
     testImplementation 'ch.qos.logback:logback-classic:1.2.3'
     testImplementation 'com.epam.reportportal:logger-java-logback:5.1.0-RC-1'
