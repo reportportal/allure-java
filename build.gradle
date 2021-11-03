@@ -25,6 +25,12 @@ subprojects {
     apply plugin: 'java-library'
     apply from: "${project.scripts_url}/${project.scripts_branch}/release-commons.gradle"
 
+    release {
+        git {
+            requireBranch = 'main'
+        }
+    }
+
     project.ext.limits = [
             'instruction': 70,
             'branch'     : 53,
