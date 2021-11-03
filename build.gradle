@@ -23,6 +23,7 @@ allprojects {
 
 subprojects {
     apply plugin: 'java-library'
+    apply from: "${project.scripts_url}/${project.scripts_branch}/release-commons.gradle"
 
     project.ext.limits = [
             'instruction': 70,
