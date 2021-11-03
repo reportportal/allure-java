@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-include 'allure-common'
-include 'agent-allure-testng'
-include 'agent-allure-junit5'
-include 'agent-allure-junit'
-include 'agent-allure-jbehave'
-include 'agent-allure-cucumber'
-include 'agent-allure-cucumber2'
-include 'agent-allure-cucumber4'
-include 'agent-allure-cucumber5'
-include 'agent-allure-cucumber6'
-include 'agent-allure-spock'
+package com.epam.reportportal.spock.utils;
+
+import com.epam.reportportal.spock.ReportPortalSpockExtension;
+import com.epam.reportportal.spock.ReportPortalSpockListener;
+
+public class TestExtension extends ReportPortalSpockExtension {
+	public static volatile ReportPortalSpockListener listener;
+
+	public TestExtension() {
+		super(listener);
+	}
+}
