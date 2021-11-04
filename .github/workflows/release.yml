@@ -70,7 +70,7 @@ jobs:
           ./gradlew ${{ github.event.inputs.agent }}:release -Prelease.useAutomaticVersion=true -Prelease.releaseVersion=${{ env.RELEASE_VERSION }} \
           -Prelease.newVersion=${{ env.NEXT_VERSION }} -PpublishRepo=${{ env.REPOSITORY_URL }}${{ github.repository }} \
           -PgithubUserName=${{ github.actor }} -PgithubToken=${{ secrets.GITHUB_TOKEN }} -PtagTemplate='$name-$version' \
-          -PfailOnSnapshotDependencies=false -PgpgPassphrase=${{  secrets.GPG_PASSPHRASE  }} -PgpgPrivateKey="$(cat <<'EOF'
+          -PgpgPassphrase=${{  secrets.GPG_PASSPHRASE  }} -PgpgPrivateKey="$(cat <<'EOF'
           ${{ secrets.GPG_PRIVATE_KEY }}
           EOF
           )"
