@@ -52,7 +52,7 @@ public class StepAspect {
 
 	private static final Map<String, AtomicLong> STEP_COUNTERS = new ConcurrentHashMap<>();
 
-	public static String STEP_DESCRIPTION = "Step description: ";
+	public static final String STEP_DESCRIPTION = "Step description: ";
 
 	@Pointcut("@annotation(step)")
 	public void withStepAnnotation(Step step) {

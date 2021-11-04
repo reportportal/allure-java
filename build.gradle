@@ -14,16 +14,6 @@
  * limitations under the License.
  */
 
-buildscript {
-    repositories {
-        mavenCentral()
-        jcenter()
-    }
-    dependencies {
-        classpath 'com.github.jengelman.gradle.plugins:shadow:5.2.0'
-    }
-}
-
 allprojects {
     repositories {
         mavenCentral()
@@ -33,8 +23,9 @@ allprojects {
 
 subprojects {
     apply plugin: 'java-library'
-    apply plugin: 'com.github.johnrengelman.shadow'
+    apply from: "${project.scripts_url}/${project.scripts_branch}/build-quality.gradle"
     apply from: "${project.scripts_url}/${project.scripts_branch}/release-commons.gradle"
+    apply from: "${project.scripts_url}/${project.scripts_branch}/signing.gradle"
 
     release {
         git {
