@@ -69,7 +69,7 @@ jobs:
         run: |
           ./gradlew ${{ github.event.inputs.agent }}:release -Prelease.useAutomaticVersion=true -Prelease.releaseVersion=${{ env.RELEASE_VERSION }} \
           -Prelease.newVersion=${{ env.NEXT_VERSION }} -PpublishRepo=${{ env.REPOSITORY_URL }}${{ github.repository }} \
-          -PgithubUserName=${{ github.actor }} -PgithubToken=${{ secrets.GITHUB_TOKEN }} -PtagTemplate='$name-$version' \
+          -PgithubUserName=${{ github.actor }} -PgithubToken=${{ secrets.GITHUB_TOKEN }} \
           -PgpgPassphrase=${{  secrets.GPG_PASSPHRASE  }} -PgpgPrivateKey="$(cat <<'EOF'
           ${{ secrets.GPG_PRIVATE_KEY }}
           EOF
@@ -102,14 +102,14 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ env.RELEASE_VERSION }}
-          release_name: Release ${{ env.RELEASE_VERSION }}
+          tag_name: ${{ github.event.inputs.agent }}-${{ env.RELEASE_VERSION }}
+          release_name: Release ${{ github.event.inputs.agent }} ${{ env.RELEASE_VERSION }}
           body: ${{ steps.readChangelogEntry.outputs.log_entry }}
           draft: false
           prerelease: false
 
       - name: Checkout develop branch
-        if: ${{ github.ref }} == 'master'
+        if: ${{ github.ref }} == 'main'
         uses: actions/checkout@v2
         with:
           ref: 'develop'
@@ -117,9 +117,9 @@ jobs:
 
       - name: Merge release branch into develop
         id: mergeIntoDevelop
-        if: ${{ github.ref }} == 'master'
+        if: ${{ github.ref }} == 'main'
         run: |
-          git merge -m 'Merge master branch into develop after a release' origin/master
+          git merge -m 'Merge master branch into develop after a release' origin/main
           git status | (! grep -Fq 'both modified:') || git status | grep -F 'both modified:' \
           | { echo -e 'Unable to merge master into develop, merge conflicts:'; (! grep -Eo '[^ ]+$') }
           git push
