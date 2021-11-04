@@ -23,7 +23,6 @@ allprojects {
 
 subprojects {
     apply plugin: 'java-library'
-    apply plugin: 'com.github.johnrengelman.shadow'
     apply from: "${project.scripts_url}/${project.scripts_branch}/build-quality.gradle"
     apply from: "${project.scripts_url}/${project.scripts_branch}/release-commons.gradle"
     apply from: "${project.scripts_url}/${project.scripts_branch}/signing.gradle"
