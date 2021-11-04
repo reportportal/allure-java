@@ -16,7 +16,7 @@
 
 dependencies {
     api 'com.epam.reportportal:agent-java-testng:5.1.0-RC-4'
-    implementation project(":allure-common")
+    implementation 'com.epam.reportportal:allure-common:5.1.0-BETA-2'
 
     testImplementation project(':allure-common')
     testImplementation 'io.qameta.allure:allure-java-commons:2.14.0'

@@ -16,7 +16,7 @@
 
 dependencies {
     api 'com.epam.reportportal:agent-java-cucumber5:5.1.0-RC-3'
-    implementation project(":allure-common")
+    implementation 'com.epam.reportportal:allure-common:5.1.0-BETA-2'
 
     testImplementation 'io.qameta.allure:allure-java-commons:2.14.0'
     testImplementation "io.cucumber:cucumber-java:${project.cucumber_version}"
