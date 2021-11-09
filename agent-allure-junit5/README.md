@@ -18,6 +18,27 @@ dependencies {
     <scope>test</scope>
 </dependency>
 ```
+### Property configuration file
+
+To start using Report Portal you need to create a file named `reportportal.properties` in your Java project in a source folder
+`src/main/resources` or `src/test/resources` (depending on where your tests are located):
+
+**reportportal.properties**
+
+```
+rp.endpoint = http://localhost:8080
+rp.uuid = e0e541d8-b1cd-426a-ae18-b771173c545a
+rp.launch = JUnit 5 Tests
+rp.project = default_personal
+```
+
+**Property description**
+
+* `rp.endpoint` - the URL for the report portal server (actual link).
+* `rp.api.key` - an access token for Report Portal which is used for user identification. It can be found on your report portal user profile
+  page.
+* `rp.project` - a project ID on which the agent will report test launches. Must be set to one of your assigned projects.
+* `rp.launch` - a user-selected identifier of test launches.
 
 ## No AspectJ configuration
 If you don't have Allure configured yet and to be able to use all Agent features you also need to include AspectJ Java agent (usually it's
