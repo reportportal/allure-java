@@ -1,11 +1,11 @@
 # Report Portal Allure integration for Cucumber framework
 ## Installation
-The Agent follows the same idea as our original [Cucumber](https://github.com/reportportal/agent-java-cucumber) agent. To start working with
-Allure features you need to include our agent into your dependencies and setup Cucumber reporter.
+The Agent follows the same idea as our original [Spock](https://github.com/reportportal/agent-java-spock) agent. To start working with
+Allure features you need to include our agent into your dependencies.
 ### Gradle
 ```groovy
 dependencies {
-    'com.epam.reportportal:agent-allure-cucumber:$LATEST_VERSION'
+    'com.epam.reportportal:agent-allure-spock:5.1.0-BETA-1'
 }
 ```
 
@@ -13,32 +13,10 @@ dependencies {
 ```xml
 <dependency>
     <groupId>com.epam.reportportal</groupId>
-    <artifactId>agent-allure-cucumber</artifactId>
-    <version>$LATEST_VERSION</version>
+    <artifactId>agent-allure-spock</artifactId>
+    <version>5.1.0-BETA-1</version>
     <scope>test</scope>
 </dependency>
-```
-
-## Reporters
-**Step Reporter** propagates the most traditional for ReportPortal test structure
-keeping your scenarios and steps inside as separate entities. In opposite, **Scenario Reporter**
-use scenario as the base point and does not separate step from each other which is sometimes more
-convenient for BDD users.
-
-Enabling **StepReporter**:
-```java
-@RunWith(Cucumber.class)
-@CucumberOptions(plugin = {"pretty", "com.epam.reportportal.cucumber.StepReporter"})
-public class RunCukesTest {
-}
-```
-
-Enabling **ScenarioReporter**:
-```java
-@RunWith(Cucumber.class)
-@CucumberOptions(plugin = {"pretty", "com.epam.reportportal.cucumber.ScenarioReporter"})
-public class RunCukesTest {
-}
 ```
 
 ### Property configuration file
@@ -51,7 +29,7 @@ To start using Report Portal you need to create a file named `reportportal.prope
 ```
 rp.endpoint = http://localhost:8080
 rp.uuid = e0e541d8-b1cd-426a-ae18-b771173c545a
-rp.launch = Cucumber Tests
+rp.launch = Spock Tests
 rp.project = default_personal
 ```
 

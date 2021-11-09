@@ -51,7 +51,7 @@ To start using Report Portal you need to create a file named `reportportal.prope
 ```
 rp.endpoint = http://localhost:8080
 rp.uuid = e0e541d8-b1cd-426a-ae18-b771173c545a
-rp.launch = JUnit 5 Tests
+rp.launch = Cucumber 2 Tests
 rp.project = default_personal
 ```
 
