@@ -1,4 +1,4 @@
-# Report Portal Allure integration for TestNG framework
+# Report Portal Allure integration for JUnit framework
 > For more detailed installation description (e.g. logging configuration) please see original agent documentation: 
 > [reportportal/agent-java-junit](https://github.com/reportportal/agent-java-junit)
 ## Installation
