@@ -21,7 +21,8 @@ import com.epam.reportportal.allure.FormatUtils;
 import com.epam.reportportal.allure.RuntimeAspect;
 import com.epam.ta.reportportal.ws.model.FinishTestItemRQ;
 import com.epam.ta.reportportal.ws.model.StartTestItemRQ;
-import io.cucumber.messages.Messages;
+import com.epam.ta.reportportal.ws.model.attribute.ItemAttributesRQ;
+import io.cucumber.core.gherkin.Feature;
 import io.cucumber.plugin.event.TestCase;
 import io.reactivex.Maybe;
 import org.apache.commons.lang3.tuple.Pair;
@@ -53,14 +54,14 @@ public class AllureAwareReporter {
 		}).collect(Collectors.toList());
 	}
 
-	private static List<Pair<String, String>> toMapTags(List<Messages.GherkinDocument.Feature.Tag> tags) {
-		return toMap(tags.stream().map(Messages.GherkinDocument.Feature.Tag::getName).collect(Collectors.toList()));
+	private static List<Pair<String, String>> toMapTags(Set<ItemAttributesRQ> tags) {
+		return toMap(tags.stream().map(ItemAttributesRQ::getValue).collect(Collectors.toList()));
 	}
 
 	@Nonnull
-	public static StartTestItemRQ processStartFeatureRequest(@Nonnull Messages.GherkinDocument.Feature feature,
-			@Nonnull StartTestItemRQ rq) {
-		BddUtils.processLinks(rq, toMapTags(feature.getTagsList()));
+	@SuppressWarnings("unused")
+	public static StartTestItemRQ processStartFeatureRequest(@Nonnull Feature feature, @Nonnull StartTestItemRQ rq) {
+		BddUtils.processLinks(rq, toMapTags(rq.getAttributes()));
 		BddUtils.splitKeyValueAttributes(rq, ATTRIBUTE_REPLACE_SET, ALLURE_VALUE_DELIMITER);
 		return rq;
 	}

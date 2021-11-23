@@ -19,8 +19,8 @@ package com.epam.reportportal.cucumber;
 import com.epam.reportportal.listeners.ItemStatus;
 import com.epam.ta.reportportal.ws.model.FinishTestItemRQ;
 import com.epam.ta.reportportal.ws.model.StartTestItemRQ;
-import com.epam.ta.reportportal.ws.model.attribute.ItemAttributesRQ;
-import io.cucumber.messages.Messages;
+import io.cucumber.core.gherkin.Feature;
+import io.cucumber.plugin.event.Node;
 import io.cucumber.plugin.event.TestCase;
 import io.reactivex.Maybe;
 
@@ -29,7 +29,6 @@ import javax.annotation.Nullable;
 import java.net.URI;
 import java.util.Date;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.epam.reportportal.cucumber.AllureAwareReporter.*;
@@ -64,15 +63,14 @@ public class AllureAwareStepReporter extends StepReporter {
 
 	@Override
 	@Nonnull
-	protected StartTestItemRQ buildStartFeatureRequest(@Nonnull Messages.GherkinDocument.Feature feature, @Nonnull URI uri) {
+	protected StartTestItemRQ buildStartFeatureRequest(@Nonnull Feature feature, @Nonnull URI uri) {
 		return processStartFeatureRequest(feature, super.buildStartFeatureRequest(feature, uri));
 	}
 
 	@Override
 	@Nonnull
-	protected StartTestItemRQ buildStartRuleRequest(@Nonnull String name, String description, @Nullable String codeRef,
-			@Nullable Set<ItemAttributesRQ> attributes) {
-		return processStartRuleRequest(super.buildStartRuleRequest(name, description, codeRef, attributes));
+	protected StartTestItemRQ buildStartRuleRequest(@Nonnull Node.Rule rule, @Nullable String codeRef) {
+		return processStartRuleRequest(super.buildStartRuleRequest(rule, codeRef));
 	}
 
 	@Override
