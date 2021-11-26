@@ -15,7 +15,7 @@
  */
 
 dependencies {
-    api 'com.epam.reportportal:agent-java-cucumber6:5.1.0-RC-5'
+    api 'com.epam.reportportal:agent-java-cucumber6:5.1.0-RC-6'
     implementation 'com.epam.reportportal:allure-common:5.1.0-BETA-2'
     implementation 'io.cucumber:cucumber-gherkin:6.0.0'
 

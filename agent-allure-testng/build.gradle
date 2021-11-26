@@ -15,7 +15,7 @@
  */
 
 dependencies {
-    api 'com.epam.reportportal:agent-java-testng:5.1.0-RC-4'
+    api 'com.epam.reportportal:agent-java-testng:5.1.0'
     implementation 'com.epam.reportportal:allure-common:5.1.0-BETA-2'
 
     testImplementation 'com.epam.reportportal:allure-common:5.1.0-BETA-2'

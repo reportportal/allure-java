@@ -15,7 +15,7 @@
  */
 
 dependencies {
-    api 'com.epam.reportportal:agent-java-cucumber2:5.1.0-RC-3'
+    api 'com.epam.reportportal:agent-java-cucumber2:5.1.0'
     implementation 'com.epam.reportportal:allure-common:5.1.0-BETA-2'
 
     testImplementation 'io.qameta.allure:allure-java-commons:2.14.0'
