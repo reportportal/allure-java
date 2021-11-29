@@ -47,7 +47,7 @@ subprojects {
     targetCompatibility = JavaVersion.VERSION_1_8
 
     dependencies {
-        testImplementation 'com.github.reportportal:agent-java-test-utils:3d4d206'
+        testImplementation 'com.github.reportportal:agent-java-test-utils:04794e8'
         testImplementation("org.junit.platform:junit-platform-runner:${junit5_runner_version}") {
             exclude module: 'junit'
         }
