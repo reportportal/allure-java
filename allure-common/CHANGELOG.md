@@ -1,6 +1,9 @@
 # Changelog
 
 ## [Unreleased]
+### Changed
+- Allure version updated on 2.17.2
+- Client version updated on [5.1.1](https://github.com/reportportal/client-java/releases/tag/5.1.1)
 
 ## [5.1.0-BETA-2]
 ### Fixed
