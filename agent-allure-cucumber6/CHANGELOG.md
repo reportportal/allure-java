@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+### Changed
+- Logback version update
 
 ## [5.1.0-BETA-2]
 

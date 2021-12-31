@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+### Changed
+- Logback version update
 ### Added
 - Initial public release
 
