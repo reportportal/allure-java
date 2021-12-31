@@ -20,7 +20,7 @@ dependencies {
 
     testImplementation 'org.codehaus.groovy:groovy:2.5.14'
     testImplementation 'io.qameta.allure:allure-java-commons:2.14.0'
-    testImplementation 'ch.qos.logback:logback-classic:1.2.3'
+    testImplementation 'ch.qos.logback:logback-classic:1.2.10'
     testImplementation 'com.epam.reportportal:logger-java-logback:5.1.0'
 }
 
