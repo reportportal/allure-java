@@ -21,7 +21,7 @@ allprojects {
     }
 }
 
-subprojects {
+configure(allprojects - project('allure-common')) {
     apply plugin: 'java-library'
     apply from: "${project.scripts_url}/${project.scripts_branch}/build-quality.gradle"
     apply from: "${project.scripts_url}/${project.scripts_branch}/release-commons.gradle"
@@ -47,6 +47,13 @@ subprojects {
     targetCompatibility = JavaVersion.VERSION_1_8
 
     dependencies {
+        implementation 'com.epam.reportportal:allure-common:5.1.0-BETA-3'
+
+        testImplementation ('io.qameta.allure:allure-java-commons:2.17.2') {
+            exclude group: 'org.slf4j'
+        }
+        testImplementation 'ch.qos.logback:logback-classic:1.2.10'
+        testImplementation 'com.epam.reportportal:logger-java-logback:5.1.0'
         testImplementation 'com.github.reportportal:agent-java-test-utils:04794e8'
         testImplementation("org.junit.platform:junit-platform-runner:${junit5_runner_version}") {
             exclude module: 'junit'
@@ -57,5 +64,20 @@ subprojects {
         testImplementation 'org.hamcrest:hamcrest-core:2.2'
         testImplementation "org.mockito:mockito-core:${mockito_version}"
         testImplementation "org.mockito:mockito-junit-jupiter:${mockito_version}"
+    }
+
+    test {
+        useJUnitPlatform()
+        outputs.upToDateWhen { false }
+        maxParallelForks(5) // it's forks - separate JVMs, should not interfere each other
+        doFirst {
+            def weaver = configurations.testRuntimeClasspath.find { it.name.contains("aspectjweaver") }
+            jvmArgs += "-javaagent:$weaver"
+        }
+        environment "AGENT_NO_ANALYTICS", "1"
+        testLogging {
+            events "failed"
+            exceptionFormat "full"
+        }
     }
 }
