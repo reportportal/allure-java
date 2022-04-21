@@ -41,12 +41,12 @@ targetCompatibility = JavaVersion.VERSION_1_8
 dependencies {
     api 'com.epam.reportportal:commons-model:5.0.0'
     api 'com.google.code.findbugs:jsr305:3.0.2'
-    api ('io.qameta.allure:allure-java-commons:2.17.2') {
+    api ('io.qameta.allure:allure-java-commons:2.17.3') {
         exclude group: 'org.slf4j'
     }
 
-    implementation 'org.slf4j:slf4j-api:1.7.32'
-    implementation 'com.epam.reportportal:client-java:5.1.4'
+    implementation 'org.slf4j:slf4j-api:1.7.36'
+    implementation 'com.epam.reportportal:client-java:5.1.9'
 
     testImplementation 'com.github.reportportal:agent-java-test-utils:04794e8'
     testImplementation("org.junit.platform:junit-platform-runner:${junit5_runner_version}") {
