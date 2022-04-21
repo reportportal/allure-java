@@ -15,7 +15,7 @@
  */
 
 dependencies {
-    api 'com.epam.reportportal:agent-java-junit5:5.1.0'
+    api 'com.epam.reportportal:agent-java-junit5:5.1.2'
 }
 
 jar {
