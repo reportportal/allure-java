@@ -16,28 +16,6 @@
 
 dependencies {
     api 'com.epam.reportportal:agent-java-junit:5.1.0'
-    implementation 'com.epam.reportportal:allure-common:5.1.0-BETA-2'
-
-    testImplementation 'io.qameta.allure:allure-java-commons:2.17.2'
-    testImplementation 'ch.qos.logback:logback-classic:1.2.10'
-    testImplementation 'com.epam.reportportal:logger-java-logback:5.1.0'
-}
-
-test {
-    useJUnitPlatform()
-    outputs.upToDateWhen { false }
-    maxParallelForks(5) // it's forks - separate JVMs, should not interfere each other
-    doFirst {
-        def junitFoundation = configurations.runtimeClasspath.resolvedConfiguration.resolvedArtifacts.find { it.name == 'junit-foundation' }
-        def weaver = configurations.testRuntimeClasspath.find { it.name.contains("aspectjweaver") }
-        jvmArgs += "-javaagent:${junitFoundation.file}"
-        jvmArgs += "-javaagent:$weaver"
-    }
-    environment "AGENT_NO_ANALYTICS", "1"
-    testLogging {
-        events "failed"
-        exceptionFormat "full"
-    }
 }
 
 jar {

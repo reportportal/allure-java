@@ -15,29 +15,10 @@
  */
 
 dependencies {
-    api 'com.epam.reportportal:agent-java-cucumber6:5.1.0-RC-6'
-    implementation 'com.epam.reportportal:allure-common:5.1.0-BETA-2'
+    api 'com.epam.reportportal:agent-java-cucumber6:5.1.0'
     implementation 'io.cucumber:cucumber-gherkin:6.0.0'
 
-    testImplementation 'io.qameta.allure:allure-java-commons:2.17.2'
     testImplementation "io.cucumber:cucumber-java:${project.cucumber_version}"
     testImplementation "io.cucumber:cucumber-testng:${project.cucumber_version}"
-    testImplementation 'ch.qos.logback:logback-classic:1.2.10'
-    testImplementation 'com.epam.reportportal:logger-java-logback:5.1.0'
     testImplementation 'org.testng:testng:7.1.0'
-}
-
-test {
-    useJUnitPlatform()
-    outputs.upToDateWhen { false }
-    maxParallelForks(5) // it's forks - separate JVMs, should not interfere each other
-    doFirst {
-        def weaver = configurations.testRuntimeClasspath.find { it.name.contains("aspectjweaver") }
-        jvmArgs += "-javaagent:$weaver"
-    }
-    environment "AGENT_NO_ANALYTICS", "1"
-    testLogging {
-        events "failed"
-        exceptionFormat "full"
-    }
 }
