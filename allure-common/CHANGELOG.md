@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+### Added
+- `@Step` annotation templating, by @HardNorth
 
 ## [5.1.0-BETA-4]
 ### Added

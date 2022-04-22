@@ -16,11 +16,13 @@
 
 package com.epam.reportportal.allure;
 
+import com.epam.reportportal.aspect.StepNameUtils;
 import com.epam.reportportal.listeners.ItemStatus;
 import com.epam.reportportal.listeners.LogLevel;
 import com.epam.reportportal.service.Launch;
 import com.epam.reportportal.service.ReportPortal;
 import com.epam.reportportal.service.step.StepRequestUtils;
+import com.epam.reportportal.utils.templating.TemplateConfiguration;
 import com.epam.ta.reportportal.ws.model.FinishTestItemRQ;
 import com.epam.ta.reportportal.ws.model.StartTestItemRQ;
 import io.qameta.allure.Allure;
@@ -69,14 +71,16 @@ public class StepAspect {
 	@Before(value = "!stepMethod() && (anyMethod() && withStepAnnotation(step))", argNames = "joinPoint,step")
 	public void startNestedStepAnnotation(JoinPoint joinPoint, Step step) {
 		MethodSignature signature = (MethodSignature) joinPoint.getSignature();
-		StartTestItemRQ startStepRequest = com.epam.reportportal.aspect.StepRequestUtils.buildStartStepRequest(step.value().isEmpty() ?
-						signature.getName() :
-						step.value(),
+		String name = step.value().trim().isEmpty() ?
+				signature.getName() :
+				StepNameUtils.getStepName(step.value(), new TemplateConfiguration(), signature, joinPoint);
+		StartTestItemRQ startStepRequest = com.epam.reportportal.aspect.StepRequestUtils.buildStartStepRequest(name,
 				ofNullable(signature.getMethod().getAnnotation(Description.class)).map(Description::value)
 						.filter(d -> !d.isEmpty())
 						.orElse(null),
 				signature
 		);
+		//noinspection ReactiveStreamsUnusedPublisher
 		ofNullable(Launch.currentLaunch()).ifPresent(l -> l.getStepReporter().startNestedStep(startStepRequest));
 		ofNullable(startStepRequest.getDescription()).ifPresent(d -> ReportPortal.emitLog(STEP_DESCRIPTION + d,
 				LogLevel.INFO.name(),
@@ -116,6 +120,7 @@ public class StepAspect {
 							parentSimpleName + " anonymous step " + stepCounter.incrementAndGet() :
 							parentSimpleName + " step " + stepCounter.incrementAndGet();
 					StartTestItemRQ rq = com.epam.reportportal.service.step.StepRequestUtils.buildStartStepRequest(stepName, null);
+					//noinspection ReactiveStreamsUnusedPublisher
 					ofNullable(Launch.currentLaunch()).ifPresent(l -> l.getStepReporter().startNestedStep(rq));
 				}
 				return;
@@ -124,6 +129,7 @@ public class StepAspect {
 					StartTestItemRQ rq = com.epam.reportportal.service.step.StepRequestUtils.buildStartStepRequest(args[0].toString(),
 							null
 					);
+					//noinspection ReactiveStreamsUnusedPublisher
 					ofNullable(Launch.currentLaunch()).ifPresent(l -> l.getStepReporter().startNestedStep(rq));
 					return;
 				}
@@ -132,6 +138,7 @@ public class StepAspect {
 					StartTestItemRQ rq = com.epam.reportportal.service.step.StepRequestUtils.buildStartStepRequest(args[0].toString(),
 							null
 					);
+					//noinspection ReactiveStreamsUnusedPublisher
 					ofNullable(Launch.currentLaunch()).ifPresent(l -> l.getStepReporter().startNestedStep(rq));
 				}
 		}
