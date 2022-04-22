@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 EPAM Systems
+ * Copyright 2022 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,23 @@
  * limitations under the License.
  */
 
-dependencies {
-    api ('com.epam.reportportal:agent-java-testng:5.1.2') {
-        exclude module: 'client-java'
-    }
-    api 'com.epam.reportportal:client-java:5.1.10'
-}
+package com.epam.reportportal.testng.features.steps;
 
-jar {
-    from("src/main/services") {
-        into("META-INF/services")
-    }
+import io.qameta.allure.Step;
+import org.testng.annotations.Test;
+
+public class MethodStepTemplate {
+	public static final String FIELD = "template";
+	public static final String PARAMETER = "parameter";
+
+	public static final String STEP_TEMPLATE_VALUE = "allure-step-{this.FIELD}-{0}";
+
+	@Step(STEP_TEMPLATE_VALUE)
+	public void step(String param) {
+	}
+
+	@Test
+	void test() {
+		step(PARAMETER);
+	}
 }

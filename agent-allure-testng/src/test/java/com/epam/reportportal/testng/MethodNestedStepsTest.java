@@ -203,4 +203,20 @@ public class MethodNestedStepsTest {
 		FinishTestItemRQ finishStep2 = finishNestedStepCapture2.getValue();
 		assertThat(finishStep2.getStatus(), equalTo(ItemStatus.PASSED.name()));
 	}
+
+	@Test
+	void test_verify_steps_support_templating_with_self_reference() {
+		mockNestedSteps(client, nestedStepLinks.get(0));
+		runTests(MethodStepTemplate.class);
+
+		ArgumentCaptor<StartTestItemRQ> startNestedStepCapture = ArgumentCaptor.forClass(StartTestItemRQ.class);
+		verify(client).startTestItem(same(stepUuid), startNestedStepCapture.capture());
+
+		StartTestItemRQ startStep = startNestedStepCapture.getValue();
+		assertThat(
+				startStep.getName(),
+				equalTo(MethodStepTemplate.STEP_TEMPLATE_VALUE.replace("{this.FIELD}", MethodStepTemplate.FIELD)
+						.replace("{0}", MethodStepTemplate.PARAMETER))
+		);
+	}
 }
