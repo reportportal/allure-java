@@ -46,7 +46,7 @@ dependencies {
     }
 
     implementation 'org.slf4j:slf4j-api:1.7.36'
-    implementation 'com.epam.reportportal:client-java:5.1.10'
+    implementation 'com.epam.reportportal:client-java:5.1.11'
 
     testImplementation 'com.github.reportportal:agent-java-test-utils:04794e8'
     testImplementation("org.junit.platform:junit-platform-runner:${junit5_runner_version}") {
