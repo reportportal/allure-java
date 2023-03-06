@@ -18,7 +18,7 @@ dependencies {
     api ('com.epam.reportportal:agent-java-junit5:5.1.4') {
         exclude module: 'client-java'
     }
-    api 'com.epam.reportportal:client-java:5.1.11'
+    api 'com.epam.reportportal:client-java:5.1.15'
 }
 
 jar {
