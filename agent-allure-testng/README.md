@@ -5,7 +5,7 @@ to include Agent dependency.
 ### Gradle
 ```groovy
 dependencies {
-    'com.epam.reportportal:agent-allure-testng:5.1.0-BETA-1'
+    'com.epam.reportportal:agent-allure-testng:5.1.0'
 }
 ```
 
@@ -14,10 +14,11 @@ dependencies {
 <dependency>
     <groupId>com.epam.reportportal</groupId>
     <artifactId>agent-allure-testng</artifactId>
-    <version>5.1.0-BETA-1-SNAPSHOT</version>
+    <version>5.1.0</version>
     <scope>test</scope>
 </dependency>
 ```
+
 ### Property configuration file
 
 To start using Report Portal you need to create a file named `reportportal.properties` in your Java project in a source folder
