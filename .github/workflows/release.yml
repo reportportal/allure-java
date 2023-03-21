@@ -102,7 +102,7 @@ jobs:
         id: createRelease
         uses: ncipollo/release-action@v1
         with:
-          tag_name: ${{ github.event.inputs.agent }}-${{ env.RELEASE_VERSION }}
+          tag: ${{ github.event.inputs.agent }}-${{ env.RELEASE_VERSION }}
           name: Release ${{ github.event.inputs.agent }} ${{ env.RELEASE_VERSION }}
           body: ${{ steps.readChangelogEntry.outputs.changes }}
 
