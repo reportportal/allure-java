@@ -2,8 +2,8 @@
 
 ## [Unreleased]
 ### Changed
-- Agent version updated on [5.1.0](https://github.com/reportportal/agent-java-spock/releases/tag/5.1.0), by @HardNorth
-- Client version updated on [5.1.15](https://github.com/reportportal/client-java/releases/tag/5.1.15), by @HardNorth
+- Agent version updated on [5.1.1](https://github.com/reportportal/agent-java-spock/releases/tag/5.1.1), by @HardNorth
+- Client version updated on [5.1.16](https://github.com/reportportal/client-java/releases/tag/5.1.15), by @HardNorth
 
 ## [5.1.0-BETA-3]
 ### Added

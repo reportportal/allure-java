@@ -41,7 +41,7 @@ targetCompatibility = JavaVersion.VERSION_1_8
 dependencies {
     api 'com.epam.reportportal:commons-model:5.0.0'
     api 'com.google.code.findbugs:jsr305:3.0.2'
-    api ('io.qameta.allure:allure-java-commons:2.21.0') {
+    api ("io.qameta.allure:allure-java-commons:${allure_version}") {
         exclude group: 'org.slf4j'
     }
 

@@ -15,8 +15,8 @@
  */
 
 dependencies {
-    api ('com.epam.reportportal:agent-java-jbehave:5.1.2') {
+    api ('com.epam.reportportal:agent-java-jbehave:5.2.1') {
         exclude module: 'client-java'
     }
-    api 'com.epam.reportportal:client-java:5.1.15'
+    api 'com.epam.reportportal:client-java:5.1.16'
 }
