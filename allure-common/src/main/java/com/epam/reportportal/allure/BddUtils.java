@@ -16,6 +16,7 @@
 
 package com.epam.reportportal.allure;
 
+import com.epam.reportportal.utils.MemoizingSupplier;
 import com.epam.ta.reportportal.ws.model.StartTestItemRQ;
 import com.epam.ta.reportportal.ws.model.attribute.ItemAttributesRQ;
 import org.apache.commons.lang3.tuple.Pair;
@@ -25,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.*;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static java.util.Optional.ofNullable;
@@ -32,7 +34,21 @@ import static java.util.Optional.ofNullable;
 public class BddUtils {
 	private static final Logger LOGGER = LoggerFactory.getLogger(BddUtils.class);
 
-	private static volatile Map<String, String> allureProperties;
+	private static final Supplier<Map<String, String>> allureProperties = new MemoizingSupplier<>(() -> {
+		Properties properties = new Properties();
+		ofNullable(Thread.currentThread()
+				.getContextClassLoader()
+				.getResourceAsStream("allure.properties")).ifPresent(is -> {
+			try {
+				properties.load(is);
+			} catch (IOException e) {
+				LOGGER.warn("Unable to load pattern property file");
+			}
+		});
+		Map<String, String> propertyMap = new HashMap<>();
+		properties.forEach((k, v) -> propertyMap.put(k.toString(), v.toString()));
+		return Collections.unmodifiableMap(propertyMap);
+	});
 
 	public static final String MUTED_TAG = "muted";
 	public static final String ISSUE_TAG = "issue";
@@ -46,35 +62,22 @@ public class BddUtils {
 	}
 
 	private static Map<String, String> getProperties() {
-		if (allureProperties == null) {
-			synchronized (BddUtils.class) {
-				if (allureProperties == null) {
-					Properties properties = new Properties();
-					ofNullable(Thread.currentThread().getContextClassLoader().getResourceAsStream("allure.properties")).ifPresent(is -> {
-						try {
-							properties.load(is);
-						} catch (IOException e) {
-							LOGGER.warn("Unable to load pattern property file");
-						}
-					});
-					Map<String, String> propertyMap = new HashMap<>();
-					properties.forEach((k, v) -> propertyMap.put(k.toString(), v.toString()));
-					allureProperties = Collections.unmodifiableMap(propertyMap);
-				}
-			}
-		}
-		return allureProperties;
+		return allureProperties.get();
 	}
 
 	public static void processLinks(@Nonnull StartTestItemRQ rq, @Nonnull Collection<Pair<String, String>> properties) {
 		List<Pair<String, String>> links = properties.stream().map(p -> {
 			if (ISSUE_TAG.equals(p.getKey())) {
 				String issue = p.getValue();
-				return ofNullable(getProperties().get(ISSUE_PATTERN_PROPERTY)).map(pattern -> pattern.replace("{}", issue)).orElse(issue);
+				return ofNullable(getProperties().get(ISSUE_PATTERN_PROPERTY)).map(pattern -> pattern.replace(
+						"{}",
+						issue
+				)).orElse(issue);
 			}
 			if (TMS_LINK_TAG.equals(p.getKey())) {
 				String tms = p.getValue();
-				return ofNullable(getProperties().get(TMS_PATTERN_PROPERTY)).map(pattern -> pattern.replace("{}", tms)).orElse(tms);
+				return ofNullable(getProperties().get(TMS_PATTERN_PROPERTY)).map(pattern -> pattern.replace("{}", tms))
+						.orElse(tms);
 			}
 			return null;
 		}).filter(Objects::nonNull).map(l -> Pair.of(l, l)).collect(Collectors.toList());
@@ -85,7 +88,8 @@ public class BddUtils {
 		properties.stream().filter(p -> MUTED_TAG.equals(p.getKey())).findAny().ifPresent(p -> rq.setHasStats(false));
 	}
 
-	public static void splitKeyValueAttributes(@Nonnull StartTestItemRQ rq, @Nonnull Set<String> attributesToSplit, char keyValueDelimiter) {
+	public static void splitKeyValueAttributes(@Nonnull StartTestItemRQ rq, @Nonnull Set<String> attributesToSplit,
+			char keyValueDelimiter) {
 		rq.setAttributes(ofNullable(rq.getAttributes()).orElse(Collections.emptySet()).stream().map(a -> {
 			String value = a.getValue();
 			int valueDelimiterIdx = ofNullable(value).map(av -> av.indexOf(keyValueDelimiter)).orElse(-1);

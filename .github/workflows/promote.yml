@@ -34,12 +34,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-
-      - name: Set up JDK 1.8
-        uses: actions/setup-java@v1
-        with:
-          java-version: 1.8
-
       - name: Get variables
         run: |
           echo "PACKAGE_PATH=`echo ${{ env.PACKAGE }} | sed 's/\./\//g'`" >> $GITHUB_ENV
@@ -61,7 +55,7 @@ jobs:
           jar -cvf ${BUNDLE_FILE} "${files[@]}"
 
           echo 'Bundle upload'
-          curl -u ${{ secrets.SONATYPE_USER }}:${{ secrets.SONATYPE_PASSWORD }} -L \
+          curl -f -u ${{ secrets.SONATYPE_USER }}:${{ secrets.SONATYPE_PASSWORD }} -L \
             --request POST '${{ env.UPSTREAM_REPOSITORY_URL }}/service/local/staging/bundle_upload' \
             --form "file=@${BUNDLE_FILE}" >response.json
 

@@ -1,6 +1,9 @@
 # Changelog
 
 ## [Unreleased]
+### Changed
+- Client version updated on [5.1.16](https://github.com/reportportal/client-java/releases/tag/5.1.16), by @HardNorth
+- Agent version updated on [5.1.3](https://github.com/reportportal/agent-java-cucumber6/releases/tag/5.1.3), by @HardNorth
 
 ## [5.1.0-BETA-4]
 ### Added
