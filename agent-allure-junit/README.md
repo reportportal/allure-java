@@ -9,7 +9,7 @@ AspectJ weaver should already been there because original Allure integration use
 with it.
 ```groovy
 dependencies {
-    'com.epam.reportportal:agent-allure-junit:5.1.0-BETA-1'
+    'com.epam.reportportal:agent-allure-junit:5.1.0'
 }
 
 test {
@@ -37,7 +37,7 @@ test {
   <dependency>
       <groupId>com.epam.reportportal</groupId>
       <artifactId>agent-allure-junit</artifactId>
-      <version>5.1.0-BETA-1-SNAPSHOT</version>
+      <version>5.1.0</version>
       <scope>test</scope>
   </dependency>
 
