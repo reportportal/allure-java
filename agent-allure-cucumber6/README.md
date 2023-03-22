@@ -1,12 +1,11 @@
 # Report Portal Allure integration for Cucumber 6-7 frameworks
 ## Installation
-The Agent follows the same idea as our original [Cucumber6](https://github.com/reportportal/agent-java-cucumber6) agent. To start working 
+The Agent follows the same idea as our original [Cucumber6](https://github.com/reportportal/agent-java-cucumber6) agent. To start working
 with Allure features you need to include our agent into your dependencies and setup Cucumber 6 or 7 reporter.
-
 ### Gradle
 ```groovy
 dependencies {
-    'com.epam.reportportal:agent-allure-cucumber6:5.1.0-BETA-2'
+    'com.epam.reportportal:agent-allure-cucumber6:5.1.0'
 }
 ```
 
@@ -15,7 +14,7 @@ dependencies {
 <dependency>
     <groupId>com.epam.reportportal</groupId>
     <artifactId>agent-allure-cucumber6</artifactId>
-    <version>5.1.0-BETA-2</version>
+    <version>5.1.0</version>
     <scope>test</scope>
 </dependency>
 ```
