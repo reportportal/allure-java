@@ -5,7 +5,7 @@ Allure features you need to include our agent into your dependencies and setup C
 ### Gradle
 ```groovy
 dependencies {
-  testImplementation 'com.epam.reportportal:agent-allure-cucumber4:5.1.0-BETA-1'
+  testImplementation 'com.epam.reportportal:agent-allure-cucumber4:5.1.0'
 }
 ```
 
@@ -14,7 +14,7 @@ dependencies {
 <dependency>
     <groupId>com.epam.reportportal</groupId>
     <artifactId>agent-allure-cucumber4</artifactId>
-    <version>5.1.0-BETA-1</version>
+    <version>5.1.0</version>
     <scope>test</scope>
 </dependency>
 ```
@@ -51,7 +51,7 @@ To start using Report Portal you need to create a file named `reportportal.prope
 ```
 rp.endpoint = http://localhost:8080
 rp.uuid = e0e541d8-b1cd-426a-ae18-b771173c545a
-rp.launch = Cucumber 2 Tests
+rp.launch = JUnit 5 Tests
 rp.project = default_personal
 ```
 
