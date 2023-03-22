@@ -5,7 +5,7 @@ to include Agent dependency.
 ### Gradle
 ```groovy
 dependencies {
-    'com.epam.reportportal:agent-allure-junit5:$LATEST_VERSION'
+  testImplementation 'com.epam.reportportal:agent-allure-junit5:$LATEST_VERSION'
 }
 ```
 
