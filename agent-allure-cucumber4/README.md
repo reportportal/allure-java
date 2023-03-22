@@ -5,7 +5,7 @@ Allure features you need to include our agent into your dependencies and setup C
 ### Gradle
 ```groovy
 dependencies {
-    'com.epam.reportportal:agent-allure-cucumber4:5.1.0-BETA-1'
+  testImplementation 'com.epam.reportportal:agent-allure-cucumber4:5.1.0-BETA-1'
 }
 ```
 

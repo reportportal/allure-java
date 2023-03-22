@@ -5,7 +5,7 @@ with Allure features you need to include our agent into your dependencies and se
 ### Gradle
 ```groovy
 dependencies {
-    'com.epam.reportportal:agent-allure-cucumber6:$LATEST_VERSION'
+  testImplementation 'com.epam.reportportal:agent-allure-cucumber6:$LATEST_VERSION'
 }
 ```
 
