@@ -5,7 +5,7 @@ Allure features you need to include our agent into your dependencies.
 ### Gradle
 ```groovy
 dependencies {
-  testImplementation 'com.epam.reportportal:agent-allure-spock:5.1.0'
+  testImplementation 'com.epam.reportportal:agent-allure-spock:5.1.1'
 }
 ```
 
@@ -14,7 +14,7 @@ dependencies {
 <dependency>
     <groupId>com.epam.reportportal</groupId>
     <artifactId>agent-allure-spock</artifactId>
-    <version>5.1.0</version>
+    <version>5.1.1</version>
     <scope>test</scope>
 </dependency>
 ```
