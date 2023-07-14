@@ -1,27 +1,35 @@
 # Report Portal Allure integration for TestNG framework
+
 ## Simple Installation
-The Agent uses TestNG's service location mechanism to integrate into tests. So in general if you already have Allure installed you just need
+
+The Agent uses TestNG's service location mechanism to integrate into tests. So in general if you already have Allure
+installed you just need
 to include Agent dependency.
+
 ### Gradle
+
 ```groovy
 dependencies {
-    testImplementation 'com.epam.reportportal:agent-allure-testng:5.1.0'
+    testImplementation 'com.epam.reportportal:agent-allure-testng:5.1.1'
 }
 ```
 
 ### Maven
+
 ```xml
+
 <dependency>
     <groupId>com.epam.reportportal</groupId>
     <artifactId>agent-allure-testng</artifactId>
-    <version>5.1.0</version>
+    <version>5.1.1</version>
     <scope>test</scope>
 </dependency>
 ```
 
 ### Property configuration file
 
-To start using Report Portal you need to create a file named `reportportal.properties` in your Java project in a source folder
+To start using Report Portal you need to create a file named `reportportal.properties` in your Java project in a source
+folder
 `src/main/resources` or `src/test/resources` (depending on where your tests are located):
 
 **reportportal.properties**
@@ -36,15 +44,21 @@ rp.project = default_personal
 **Property description**
 
 * `rp.endpoint` - the URL for the report portal server (actual link).
-* `rp.api.key` - an access token for Report Portal which is used for user identification. It can be found on your report portal user profile
+* `rp.api.key` - an access token for Report Portal which is used for user identification. It can be found on your report
+  portal user profile
   page.
-* `rp.project` - a project ID on which the agent will report test launches. Must be set to one of your assigned projects.
+* `rp.project` - a project ID on which the agent will report test launches. Must be set to one of your assigned
+  projects.
 * `rp.launch` - a user-selected identifier of test launches.
 
 ## No AspectJ configuration
-If you don't have Allure configured yet and to be able to use all Agent features you also need to include AspectJ Java agent (usually it's
+
+If you don't have Allure configured yet and to be able to use all Agent features you also need to include AspectJ Java
+agent (usually it's
 already done in scope of Allure configuration).
+
 ### Gradle
+
 ```groovy
 test {
     doFirst {
@@ -53,9 +67,13 @@ test {
     }
 }
 ```
+
 ### Maven
+
 You need to update your surefire plugin configuration (find existing not creating new) as here:
+
 ```xml
+
 <plugin>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-surefire-plugin</artifactId>
