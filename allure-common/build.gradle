@@ -45,10 +45,10 @@ dependencies {
         exclude group: 'org.slf4j'
     }
 
-    implementation 'org.slf4j:slf4j-api:1.7.36'
-    implementation 'com.epam.reportportal:client-java:5.1.16'
+    implementation 'org.slf4j:slf4j-api:2.0.7'
+    implementation 'com.epam.reportportal:client-java:5.1.22'
 
-    testImplementation 'com.epam.reportportal:agent-java-test-utils:0.0.1'
+    testImplementation 'com.epam.reportportal:agent-java-test-utils:0.0.2'
     testImplementation("org.junit.platform:junit-platform-runner:${junit5_runner_version}") {
         exclude module: 'junit'
     }
