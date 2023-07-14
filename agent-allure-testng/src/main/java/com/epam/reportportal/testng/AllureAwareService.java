@@ -45,10 +45,6 @@ public class AllureAwareService extends TestNGService {
 
 	private static final Map<ITestResult, String> DESCRIPTION_TRACKER = new ConcurrentHashMap<>();
 
-	public AllureAwareService() {
-		super();
-	}
-
 	public AllureAwareService(@Nonnull final ReportPortal reportPortal) {
 		super(reportPortal);
 	}
@@ -102,7 +98,7 @@ public class AllureAwareService extends TestNGService {
 	@Override
 	@Nonnull
 	@SuppressWarnings("unchecked")
-	protected FinishTestItemRQ buildFinishTestMethodRq(ItemStatus status, ITestResult testResult) {
+	protected FinishTestItemRQ buildFinishTestMethodRq(@Nonnull ItemStatus status, @Nonnull ITestResult testResult) {
 		FinishTestItemRQ rq = super.buildFinishTestMethodRq(status, testResult);
 		Maybe<String> itemId = (Maybe<String>) testResult.getAttribute(TestNGService.RP_ID);
 		ofNullable(RuntimeAspect.retrieveRuntimeDescription(itemId)).ifPresent(d -> {

@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
+
 dependencies {
-    api ('com.epam.reportportal:agent-java-testng:5.1.4') {
-        exclude module: 'client-java'
-    }
-    api 'com.epam.reportportal:client-java:5.1.16'
+    api 'com.epam.reportportal:agent-java-testng:5.3.1'
 }
 
 jar {

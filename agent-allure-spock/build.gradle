@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
 dependencies {
-    api ('com.epam.reportportal:agent-java-spock:5.1.1') {
-        exclude module: 'client-java'
-    }
-    api 'com.epam.reportportal:client-java:5.1.16'
+    api 'com.epam.reportportal:agent-java-spock:5.1.3'
 
     testImplementation 'org.codehaus.groovy:groovy:2.5.14'
 }
