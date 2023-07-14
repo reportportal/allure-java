@@ -42,8 +42,8 @@ configure(allprojects - project('allure-common')) {
             'class'      : 50
     ]
 
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    compileJava.options.encoding = 'UTF-8'
+    compileTestJava.options.encoding = 'UTF-8'
 
     dependencies {
         implementation 'com.epam.reportportal:allure-common:5.1.1'
