@@ -16,12 +16,14 @@
 
 package com.epam.reportportal.testng;
 
+import com.epam.reportportal.service.ReportPortal;
 import com.epam.reportportal.utils.MemoizingSupplier;
 
 import java.util.function.Supplier;
 
 public class AllureAwareListener extends BaseTestNGListener {
-	public static final Supplier<ITestNGService> SERVICE = new MemoizingSupplier<>(AllureAwareService::new);
+	public static final Supplier<ITestNGService> SERVICE =
+			new MemoizingSupplier<>(() -> new AllureAwareService(ReportPortal.builder().build()));
 
 	public AllureAwareListener() {
 		super(SERVICE.get());
