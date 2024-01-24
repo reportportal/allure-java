@@ -1,6 +1,9 @@
 # Changelog
 
 ## [Unreleased]
+### Changed
+- Client version updated on [5.2.1](https://github.com/reportportal/client-java/releases/tag/5.2.1), by @HardNorth
+- Allure version updated on 2.25.0, by @HardNorth
 
 ## [5.1.1]
 - Client version updated on [5.1.22](https://github.com/reportportal/client-java/releases/tag/5.1.22), by @HardNorth
