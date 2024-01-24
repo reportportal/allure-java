@@ -40,6 +40,7 @@ import java.util.stream.Collectors;
 import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
 
+@SuppressWarnings("unused")
 public class AnnotationUtils {
 	public static final String MARKDOWN_DELIMITER = "\n\n---\n\n";
 

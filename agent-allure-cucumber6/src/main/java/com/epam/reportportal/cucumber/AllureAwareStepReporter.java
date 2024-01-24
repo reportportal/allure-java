@@ -33,6 +33,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static com.epam.reportportal.cucumber.AllureAwareReporter.*;
 
+/**
+ * @deprecated Use {@link AllureAwareScenarioReporter}, since the semantic of this class is completely broken and will be removed
+ */
+@Deprecated(forRemoval = true, since = "5.2.0")
 public class AllureAwareStepReporter extends StepReporter {
 
 	private static final Map<Maybe<String>, String> DESCRIPTION_TRACKER = new ConcurrentHashMap<>();
