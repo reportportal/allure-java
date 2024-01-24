@@ -19,6 +19,7 @@ targetCompatibility = JavaVersion.VERSION_11
 
 dependencies {
     api 'com.epam.reportportal:agent-java-testng:5.4.0'
+    implementation 'org.testng:testng:7.9.0'
 }
 
 jar {
