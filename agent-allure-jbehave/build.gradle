@@ -23,4 +23,6 @@ dependencies {
         exclude group: 'junit'
         exclude group: 'org.junit.vintage'
     }
+
+    testImplementation 'com.squareup.okhttp3:okhttp:4.12.0'
 }
