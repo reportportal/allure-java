@@ -41,14 +41,12 @@ compileJava.options.encoding = 'UTF-8'
 compileTestJava.options.encoding = 'UTF-8'
 
 dependencies {
-    api 'com.epam.reportportal:commons-model:5.0.0'
-    api 'com.google.code.findbugs:jsr305:3.0.2'
+    compileOnly 'com.epam.reportportal:client-java:5.2.7'
 
     implementation ("io.qameta.allure:allure-java-commons:${allure_version}") {
         exclude group: 'org.slf4j'
     }
     implementation 'org.slf4j:slf4j-api:2.0.7'
-    implementation 'com.epam.reportportal:client-java:5.2.1'
 
     testImplementation 'com.epam.reportportal:agent-java-test-utils:0.0.2'
     testImplementation("org.junit.platform:junit-platform-runner:${junit5_runner_version}") {
