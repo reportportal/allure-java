@@ -41,7 +41,7 @@ compileJava.options.encoding = 'UTF-8'
 compileTestJava.options.encoding = 'UTF-8'
 
 dependencies {
-    compileOnly 'com.epam.reportportal:client-java:5.2.7'
+    compileOnly 'com.epam.reportportal:client-java:5.2.13'
 
     implementation ("io.qameta.allure:allure-java-commons:${allure_version}") {
         exclude group: 'org.slf4j'
