@@ -4,6 +4,8 @@
 ### Changed
 - Agent version updated on [5.4.6](https://github.com/reportportal/agent-java-testng/releases/tag/5.4.6), by @HardNorth
 
+## [5.2.2]
+
 ## [5.2.1]
 ### Changed
 - Agent version updated on [5.4.2](https://github.com/reportportal/agent-java-testng/releases/tag/5.4.2), by @HardNorth
