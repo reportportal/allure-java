@@ -4,6 +4,8 @@
 ### Changed
 - Agent version updated on [5.2.4](https://github.com/reportportal/agent-java-cucumber5/releases/tag/5.2.4), by @HardNorth
 
+## [5.2.2]
+
 ## [5.2.1]
 ### Changed
 - Agent version updated on [5.2.2](https://github.com/reportportal/agent-java-cucumber5/releases/tag/5.2.2), by @HardNorth
