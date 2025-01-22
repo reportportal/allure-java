@@ -18,7 +18,7 @@ sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
 dependencies {
-    api 'com.epam.reportportal:agent-java-junit5:5.3.1'
+    api 'com.epam.reportportal:agent-java-junit5:5.3.5'
 
     implementation 'org.junit.jupiter:junit-jupiter-api:5.9.1'
 }
