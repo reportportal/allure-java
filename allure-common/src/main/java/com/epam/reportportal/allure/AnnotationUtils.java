@@ -85,14 +85,10 @@ public class AnnotationUtils {
 
 	public static void processDescription(@Nonnull StartTestItemRQ rq, @Nonnull ClassLoader classLoader, @Nullable Method source) {
 		ofNullable(source).map(s -> s.getAnnotation(Description.class)).flatMap(annotation -> {
-			if (annotation.useJavaDoc()) {
+			if (annotation.useJavaDoc() || annotation.value().isEmpty()) {
 				return ResultsUtils.getJavadocDescription(classLoader, source);
 			} else {
-				if (annotation.value().isEmpty()) {
-					return ResultsUtils.getJavadocDescription(classLoader, source);
-				} else {
-					return Optional.of(annotation.value());
-				}
+				return Optional.of(annotation.value());
 			}
 		}).map(description -> ofNullable(rq.getDescription()).filter(d -> !d.isEmpty()).map(d -> {
 			StringBuilder sb = new StringBuilder(d);
