@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [5.2.2]
+
 ## [5.2.1]
 ### Changed
 - Agent version updated on [5.2.3](https://github.com/reportportal/agent-java-cucumber/releases/tag/5.2.3), by @HardNorth
