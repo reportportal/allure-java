@@ -46,7 +46,7 @@ jobs:
         uses: HardNorth/github-version-generate@v1
         with:
           version-source: file
-          version-file: ${{ github.event.inputs.agent }}/${{ env.VERSION_FILE }}
+          version-file: "${{ github.event.inputs.agent }}/${{ env.VERSION_FILE }}"
           version-file-extraction-pattern: ${{ env.VERSION_EXTRACT_PATTERN }}
 
       - name: Set up JDK 11
@@ -56,7 +56,7 @@ jobs:
           java-version: '11'
 
       - name: Setup git credentials
-        uses: oleksiyrudenko/gha-git-credentials@v2.1.1
+        uses: oleksiyrudenko/gha-git-credentials@v2-latest
         with:
           name: 'reportportal.io'
           email: 'support@reportportal.io'
@@ -102,7 +102,7 @@ jobs:
         id: createRelease
         uses: ncipollo/release-action@v1
         with:
-          tag: ${{ github.event.inputs.agent }}-${{ env.RELEASE_VERSION }}
+          tag: "${{ github.event.inputs.agent }}-${{ env.RELEASE_VERSION }}"
           name: Release ${{ github.event.inputs.agent }} ${{ env.RELEASE_VERSION }}
           body: ${{ steps.readChangelogEntry.outputs.changes }}
 
