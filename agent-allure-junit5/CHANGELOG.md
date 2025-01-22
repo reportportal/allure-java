@@ -4,6 +4,8 @@
 ### Changed
 - Agent version updated on [5.3.5](https://github.com/reportportal/agent-java-junit5/releases/tag/5.3.5), by @HardNorth
 
+## [5.2.2]
+
 ## [5.2.1]
 ### Changed
 - Agent version updated on [5.3.1](https://github.com/reportportal/agent-java-junit5/releases/tag/5.3.1), by @HardNorth
