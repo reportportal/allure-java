@@ -22,7 +22,7 @@ import com.epam.reportportal.listeners.LogLevel;
 import com.epam.reportportal.service.Launch;
 import com.epam.reportportal.service.ReportPortal;
 import com.epam.reportportal.service.step.StepRequestUtils;
-import com.epam.reportportal.utils.templating.TemplateConfiguration;
+import com.epam.reportportal.utils.formatting.templating.TemplateConfiguration;
 import com.epam.ta.reportportal.ws.model.FinishTestItemRQ;
 import com.epam.ta.reportportal.ws.model.StartTestItemRQ;
 import io.qameta.allure.Allure;
@@ -74,7 +74,8 @@ public class StepAspect {
 		String name = step.value().trim().isEmpty() ?
 				signature.getName() :
 				StepNameUtils.getStepName(step.value(), new TemplateConfiguration(), signature, joinPoint);
-		StartTestItemRQ startStepRequest = com.epam.reportportal.aspect.StepRequestUtils.buildStartStepRequest(name,
+		StartTestItemRQ startStepRequest = com.epam.reportportal.aspect.StepRequestUtils.buildStartStepRequest(
+				name,
 				ofNullable(signature.getMethod().getAnnotation(Description.class)).map(Description::value)
 						.filter(d -> !d.isEmpty())
 						.orElse(null),
@@ -82,7 +83,8 @@ public class StepAspect {
 		);
 		//noinspection ReactiveStreamsUnusedPublisher
 		ofNullable(Launch.currentLaunch()).ifPresent(l -> l.getStepReporter().startNestedStep(startStepRequest));
-		ofNullable(startStepRequest.getDescription()).ifPresent(d -> ReportPortal.emitLog(STEP_DESCRIPTION + d,
+		ofNullable(startStepRequest.getDescription()).ifPresent(d -> ReportPortal.emitLog(
+				STEP_DESCRIPTION + d,
 				LogLevel.INFO.name(),
 				Calendar.getInstance().getTime()
 		));
@@ -93,6 +95,7 @@ public class StepAspect {
 		ofNullable(Launch.currentLaunch()).ifPresent(l -> l.getStepReporter().finishNestedStep());
 	}
 
+	@SuppressWarnings("ReactiveStreamsUnusedPublisher")
 	@AfterThrowing(value = "!stepMethod() && (anyMethod() && withStepAnnotation(step))", argNames = "step")
 	public void failedNestedStep(Step step) {
 		ofNullable(Launch.currentLaunch()).ifPresent(l -> {
@@ -126,7 +129,8 @@ public class StepAspect {
 				return;
 			case 2:
 				if (args[1] instanceof Status) {
-					StartTestItemRQ rq = com.epam.reportportal.service.step.StepRequestUtils.buildStartStepRequest(args[0].toString(),
+					StartTestItemRQ rq = com.epam.reportportal.service.step.StepRequestUtils.buildStartStepRequest(
+							args[0].toString(),
 							null
 					);
 					//noinspection ReactiveStreamsUnusedPublisher
@@ -135,7 +139,8 @@ public class StepAspect {
 				}
 				if (args[1] instanceof Allure.ThrowableRunnable || args[1] instanceof Allure.ThrowableRunnableVoid
 						|| args[1] instanceof Allure.ThrowableContextRunnableVoid || args[1] instanceof Allure.ThrowableContextRunnable) {
-					StartTestItemRQ rq = com.epam.reportportal.service.step.StepRequestUtils.buildStartStepRequest(args[0].toString(),
+					StartTestItemRQ rq = com.epam.reportportal.service.step.StepRequestUtils.buildStartStepRequest(
+							args[0].toString(),
 							null
 					);
 					//noinspection ReactiveStreamsUnusedPublisher
@@ -144,6 +149,7 @@ public class StepAspect {
 		}
 	}
 
+	@SuppressWarnings("ReactiveStreamsUnusedPublisher")
 	@AfterReturning(value = "stepMethod()", argNames = "joinPoint")
 	public void finishNestedStep(JoinPoint joinPoint) {
 		Object[] args = joinPoint.getArgs();
@@ -161,7 +167,8 @@ public class StepAspect {
 				if (args[1] instanceof Status) {
 					FinishTestItemRQ rq = com.epam.reportportal.service.step.StepRequestUtils.buildFinishTestItemRequest(ofNullable(
 							STATUS_MAPPER.get((Status) args[1])).orElseGet(() -> {
-						ReportPortal.emitLog("Unable to convert item status: " + args[1].toString(),
+						ReportPortal.emitLog(
+								"Unable to convert item status: " + args[1].toString(),
 								LogLevel.ERROR.name(),
 								Calendar.getInstance().getTime()
 						);
@@ -177,6 +184,7 @@ public class StepAspect {
 		}
 	}
 
+	@SuppressWarnings("ReactiveStreamsUnusedPublisher")
 	@AfterThrowing(value = "stepMethod()", argNames = "joinPoint")
 	public void finishNestedStepFailure(JoinPoint joinPoint) {
 		Object[] args = joinPoint.getArgs();

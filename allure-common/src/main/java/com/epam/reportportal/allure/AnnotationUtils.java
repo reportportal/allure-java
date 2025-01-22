@@ -34,10 +34,10 @@ import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
 
 @SuppressWarnings("unused")
@@ -88,7 +88,11 @@ public class AnnotationUtils {
 			if (annotation.useJavaDoc()) {
 				return ResultsUtils.getJavadocDescription(classLoader, source);
 			} else {
-				return of(annotation.value()).filter(d -> !d.isEmpty());
+				if (annotation.value().isEmpty()) {
+					return ResultsUtils.getJavadocDescription(classLoader, source);
+				} else {
+					return Optional.of(annotation.value());
+				}
 			}
 		}).map(description -> ofNullable(rq.getDescription()).filter(d -> !d.isEmpty()).map(d -> {
 			StringBuilder sb = new StringBuilder(d);
