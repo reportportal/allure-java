@@ -19,11 +19,6 @@ on:
       agent:
         description: 'Agent to release'
         required: true
-    paths-ignore:
-      - README.md
-      - README_TEMPLATE.md
-      - gradle.properties
-      - CHANGELOG.md
 
 env:
   VERSION_FILE: gradle.properties
@@ -107,7 +102,6 @@ jobs:
           body: ${{ steps.readChangelogEntry.outputs.changes }}
 
       - name: Checkout develop branch
-        if: ${{ github.ref }} == 'main'
         uses: actions/checkout@v4
         with:
           ref: 'develop'
@@ -115,7 +109,6 @@ jobs:
 
       - name: Merge release branch into develop
         id: mergeIntoDevelop
-        if: ${{ github.ref }} == 'main'
         run: |
           git merge -m 'Merge master branch into develop after a release' origin/main
           git status | (! grep -Fq 'both modified:') || git status | grep -F 'both modified:' \

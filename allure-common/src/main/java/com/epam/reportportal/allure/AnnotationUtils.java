@@ -27,6 +27,7 @@ import io.qameta.allure.Flaky;
 import io.qameta.allure.Muted;
 import io.qameta.allure.Severity;
 import io.qameta.allure.util.ResultsUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -85,12 +86,12 @@ public class AnnotationUtils {
 
 	public static void processDescription(@Nonnull StartTestItemRQ rq, @Nonnull ClassLoader classLoader, @Nullable Method source) {
 		ofNullable(source).map(s -> s.getAnnotation(Description.class)).flatMap(annotation -> {
-			if (annotation.useJavaDoc() || annotation.value().isEmpty()) {
+			if (annotation.useJavaDoc() || StringUtils.isBlank(annotation.value())) {
 				return ResultsUtils.getJavadocDescription(classLoader, source);
 			} else {
 				return Optional.of(annotation.value());
 			}
-		}).map(description -> ofNullable(rq.getDescription()).filter(d -> !d.isEmpty()).map(d -> {
+		}).map(description -> ofNullable(rq.getDescription()).filter(StringUtils::isNotBlank).map(d -> {
 			StringBuilder sb = new StringBuilder(d);
 			sb.append(MARKDOWN_DELIMITER);
 			return sb;
