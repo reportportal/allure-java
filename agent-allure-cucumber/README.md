@@ -1,42 +1,49 @@
 # Report Portal Allure integration for Cucumber framework
+
 ## Installation
+
 The Agent follows the same idea as our original [Cucumber](https://github.com/reportportal/agent-java-cucumber) agent. To start working with
 Allure features you need to include our agent into your dependencies and setup Cucumber reporter.
+
 ### Gradle
+
 ```groovy
 dependencies {
-  testImplementation 'com.epam.reportportal:agent-allure-cucumber:5.2.2'
+  testImplementation 'com.epam.reportportal:agent-allure-cucumber:5.3.0'
 }
 ```
 
 ### Maven
+
 ```xml
 <dependency>
     <groupId>com.epam.reportportal</groupId>
     <artifactId>agent-allure-cucumber</artifactId>
-    <version>5.2.2</version>
+    <version>5.3.0</version>
     <scope>test</scope>
 </dependency>
 ```
 
 ## Reporters
+
 **Step Reporter** propagates the most traditional for ReportPortal test structure
 keeping your scenarios and steps inside as separate entities. In opposite, **Scenario Reporter**
-use scenario as the base point and does not separate step from each other which is sometimes more
-convenient for BDD users.
+use scenario as the base point and does not separate step from each other which is more convenient for BDD users.
 
 Enabling **StepReporter**:
+
 ```java
 @RunWith(Cucumber.class)
-@CucumberOptions(plugin = {"pretty", "com.epam.reportportal.cucumber.StepReporter"})
+@CucumberOptions(plugin = {"pretty", "com.epam.reportportal.cucumber.AllureAwareStepReporter"})
 public class RunCukesTest {
 }
 ```
 
 Enabling **ScenarioReporter**:
+
 ```java
 @RunWith(Cucumber.class)
-@CucumberOptions(plugin = {"pretty", "com.epam.reportportal.cucumber.ScenarioReporter"})
+@CucumberOptions(plugin = {"pretty", "com.epam.reportportal.cucumber.AllureAwareScenarioReporter"})
 public class RunCukesTest {
 }
 ```
@@ -67,9 +74,12 @@ These are basic properties for comprehensive list of parameters please look into
 repository.
 
 ## AspectJ configuration
+
 If you don't have Allure configured yet and to be able to use all Agent features you also need to include AspectJ Java agent (usually it's
 already done in scope of Allure configuration).
+
 ### Gradle
+
 ```groovy
 test {
     doFirst {
@@ -78,8 +88,11 @@ test {
     }
 }
 ```
+
 ### Maven
+
 You need to update your surefire plugin configuration (find existing not creating new) as here:
+
 ```xml
 <plugin>
     <groupId>org.apache.maven.plugins</groupId>
