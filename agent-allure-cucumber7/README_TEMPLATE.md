@@ -1,9 +1,9 @@
-# Report Portal Allure integration for Cucumber 7 framework
+# Report Portal Allure integration for Cucumber 6-7 frameworks
 
 ## Installation
 
 The Agent follows the same idea as our original [Cucumber7](https://github.com/reportportal/agent-java-cucumber7) agent. To start working
-with Allure features you need to include our agent into your dependencies and setup Cucumber 7 reporter.
+with Allure features you need to include our agent into your dependencies and setup Cucumber 6 or 7 reporter.
 
 ### Gradle
 
@@ -33,7 +33,7 @@ Enabling **ScenarioReporter**:
 
 ```java
 @RunWith(Cucumber.class)
-@CucumberOptions(plugin = {"pretty", "com.epam.reportportal.cucumber.ScenarioReporter"})
+@CucumberOptions(plugin = {"pretty", "com.epam.reportportal.cucumber.AllureAwareScenarioReporter"})
 public class RunCukesTest {
 }
 ```
@@ -106,4 +106,4 @@ You need to update your surefire plugin configuration (find existing not creatin
         </dependency>
     </dependencies>
 </plugin>
-``` 
+```
