@@ -37,3 +37,4 @@ build/
 **/test-output/
 **/allure-results/
 **/target/
+.vscode/

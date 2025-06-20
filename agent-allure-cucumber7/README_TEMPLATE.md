@@ -2,24 +2,23 @@
 
 ## Installation
 
-The Agent follows the same idea as our original [Cucumber6](https://github.com/reportportal/agent-java-cucumber6) agent. To start working
+The Agent follows the same idea as our original [Cucumber7](https://github.com/reportportal/agent-java-cucumber7) agent. To start working
 with Allure features you need to include our agent into your dependencies and setup Cucumber 6 or 7 reporter.
 
 ### Gradle
 
 ```groovy
 dependencies {
-    testImplementation 'com.epam.reportportal:agent-allure-cucumber6:$LATEST_VERSION'
+  testImplementation 'com.epam.reportportal:agent-allure-cucumber7:$LATEST_VERSION'
 }
 ```
 
 ### Maven
 
 ```xml
-
 <dependency>
     <groupId>com.epam.reportportal</groupId>
-    <artifactId>agent-allure-cucumber6</artifactId>
+    <artifactId>agent-allure-cucumber7</artifactId>
     <version>$LATEST_VERSION</version>
     <scope>test</scope>
 </dependency>
@@ -27,26 +26,14 @@ dependencies {
 
 ## Reporters
 
-**Step Reporter** propagates the most traditional for ReportPortal test structure
-keeping your scenarios and steps inside as separate entities. In opposite, **Scenario Reporter**
-use scenario as the base point and does not separate step from each other which is more convenient for BDD users.
-
-Enabling **StepReporter**:
-
-```java
-
-@RunWith(Cucumber.class)
-@CucumberOptions(plugin = { "pretty", "com.epam.reportportal.cucumber.AllureAwareStepReporter" })
-public class RunCukesTest {
-}
-```
+**Scenario Reporter** use scenario as the base point and does not separate step from each other which is more
+convenient for BDD users.
 
 Enabling **ScenarioReporter**:
 
 ```java
-
 @RunWith(Cucumber.class)
-@CucumberOptions(plugin = { "pretty", "com.epam.reportportal.cucumber.AllureAwareScenarioReporter" })
+@CucumberOptions(plugin = {"pretty", "com.epam.reportportal.cucumber.AllureAwareScenarioReporter"})
 public class RunCukesTest {
 }
 ```
@@ -97,7 +84,6 @@ test {
 You need to update your surefire plugin configuration (find existing not creating new) as here:
 
 ```xml
-
 <plugin>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-surefire-plugin</artifactId>
