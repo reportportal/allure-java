@@ -48,8 +48,8 @@ jobs:
         run: |
           echo "PACKAGE_PATH=`echo ${{ env.PACKAGE }} | sed 's/\./\//g'`" >> $GITHUB_ENV
           echo "VERSION=${{ inputs.version }}" >> $GITHUB_ENV
-          echo "ARTIFACT=${{ inputs.artifact }}" >> $GITHUB_ENV
-          echo "ARTIFACT_NAME=${{ inputs.artifact }}-${{ inputs.version }}" >> $GITHUB_ENV
+          echo "ARTIFACT=${{ inputs.agent }}" >> $GITHUB_ENV
+          echo "ARTIFACT_NAME=${{ inputs.agent }}-${{ inputs.version }}" >> $GITHUB_ENV
           echo "PACKAGE_SUFFIXES=${{ inputs.package_suffixes }}" >> $GITHUB_ENV
 
       - name: Create authentication token
