@@ -9,7 +9,7 @@ with Allure features you need to include our agent into your dependencies and se
 
 ```groovy
 dependencies {
-    testImplementation 'com.epam.reportportal:agent-allure-cucumber6:5.3.0'
+    testImplementation 'com.epam.reportportal:agent-allure-cucumber6:5.3.1'
 }
 ```
 
@@ -20,7 +20,7 @@ dependencies {
 <dependency>
     <groupId>com.epam.reportportal</groupId>
     <artifactId>agent-allure-cucumber6</artifactId>
-    <version>5.3.0</version>
+    <version>5.3.1</version>
     <scope>test</scope>
 </dependency>
 ```
