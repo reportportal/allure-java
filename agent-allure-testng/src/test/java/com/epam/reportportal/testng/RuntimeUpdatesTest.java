@@ -56,6 +56,7 @@ public class RuntimeUpdatesTest {
 
 	@Test
 	public void test_no_updates_produces_no_additional_data() {
+		mockLogging(client);
 		TestNG result = runTests(TestNoUpdatesDescription.class);
 		assertThat(result.getStatus(), equalTo(0));
 

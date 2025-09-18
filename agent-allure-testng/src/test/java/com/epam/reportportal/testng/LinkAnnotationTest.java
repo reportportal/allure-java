@@ -62,6 +62,7 @@ public class LinkAnnotationTest {
 	@Test
 	public void test_description_should_contain_attached_links() {
 		mockLaunch(client, namedUuid("launchUuid"), suitedUuid, testClassUuid, stepUuids.get(0));
+		mockLogging(client);
 		TestNG result = runTests(Collections.singletonList(TestNgListener.class), TestMyFirstFeature.class);
 		assertThat(result.getStatus(), equalTo(0));
 
@@ -90,6 +91,7 @@ public class LinkAnnotationTest {
 	@Test
 	public void test_description_should_not_override_attached_links() {
 		mockLaunch(client, namedUuid("launchUuid"), suitedUuid, testClassUuid, stepUuids.get(0));
+		mockLogging(client);
 		TestNG result = runTests(TestLinkAndDescription.class);
 		assertThat(result.getStatus(), equalTo(0));
 
@@ -109,6 +111,7 @@ public class LinkAnnotationTest {
 	@Test
 	public void test_description_should_not_override_attached_links_in_configuration_method() {
 		mockLaunch(client, namedUuid("launchUuid"), suitedUuid, testClassUuid, stepUuids);
+		mockLogging(client);
 		TestNG result = runTests(TestLinkAndDescriptionBefore.class);
 		assertThat(result.getStatus(), equalTo(0));
 
