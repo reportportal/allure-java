@@ -18,7 +18,7 @@ sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11
 
 dependencies {
-    api 'com.epam.reportportal:agent-java-cucumber6:5.4.2'
+    api 'com.epam.reportportal:agent-java-cucumber6:5.4.3'
 
     implementation "io.cucumber:cucumber-gherkin:${project.cucumber_version}"
 

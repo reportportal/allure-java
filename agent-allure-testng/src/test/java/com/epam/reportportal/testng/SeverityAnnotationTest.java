@@ -52,6 +52,7 @@ public class SeverityAnnotationTest {
 	@BeforeEach
 	public void initMocks() {
 		mockLaunch(client, namedUuid("launchUuid"), suitedUuid, testClassUuid, stepUuid);
+		mockLogging(client);
 		ReportPortal reportPortal = ReportPortal.create(client, standardParameters());
 		TestNgListener.REPORT_PORTAL_THREAD_LOCAL.set(reportPortal);
 	}
