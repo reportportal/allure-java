@@ -50,7 +50,6 @@ jobs:
           echo "VERSION=${{ inputs.version }}" >> $GITHUB_ENV
           echo "ARTIFACT=${{ inputs.agent }}" >> $GITHUB_ENV
           echo "ARTIFACT_NAME=${{ inputs.agent }}-${{ inputs.version }}" >> $GITHUB_ENV
-          echo "PACKAGE_SUFFIXES=${{ inputs.package_suffixes }}" >> $GITHUB_ENV
 
       - name: Create authentication token
         run: |
@@ -63,7 +62,7 @@ jobs:
           # Download all artifacts using the package suffixes
           IFS=',' read -a files <<< '${{ env.PACKAGE_SUFFIXES }}'
           for f in ${files[@]}; do
-            export URL="${{ env.REPOSITORY_URL }}/${{ github.repository }}/${PACKAGE_PATH}/${{ github.event.inputs.agent }}/${{ github.event.inputs.version }}/${{ github.event.inputs.agent }}-${{ github.event.inputs.version }}${f}"
+            export URL="${{ env.REPOSITORY_URL }}/${{ github.repository }}/${{ env.PACKAGE_PATH }}/${{ github.event.inputs.agent }}/${{ github.event.inputs.version }}/${{ github.event.inputs.agent }}-${{ github.event.inputs.version }}${f}"
             echo "Downloading artifact: ${URL}"
           
             # Download with authentication
