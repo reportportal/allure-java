@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+### Changed
+- Agent version updated on [5.3.10](https://github.com/reportportal/agent-java-cucumber7/releases/tag/5.3.10), by @HardNorth
 
 ## [5.3.1]
 ### Changed
