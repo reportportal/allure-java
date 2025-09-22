@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [5.3.2]
+
 ## [5.3.1]
 ### Changed
 - Agent version updated on [5.3.2](https://github.com/reportportal/agent-java-junit/releases/tag/5.3.2), by @HardNorth
