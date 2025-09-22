@@ -18,7 +18,7 @@ sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
 dependencies {
-    api 'com.epam.reportportal:agent-java-junit:5.3.1'
+    api 'com.epam.reportportal:agent-java-junit:5.3.2'
 }
 
 jar {
