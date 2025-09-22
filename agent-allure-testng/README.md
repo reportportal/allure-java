@@ -10,7 +10,7 @@ to include Agent dependency.
 
 ```groovy
 dependencies {
-    testImplementation 'com.epam.reportportal:agent-allure-testng:5.3.1'
+    testImplementation 'com.epam.reportportal:agent-allure-testng:5.3.2'
 }
 ```
 
@@ -21,7 +21,7 @@ dependencies {
 <dependency>
     <groupId>com.epam.reportportal</groupId>
     <artifactId>agent-allure-testng</artifactId>
-    <version>5.3.1</version>
+    <version>5.3.2</version>
     <scope>test</scope>
 </dependency>
 ```
