@@ -27,10 +27,10 @@ import io.qameta.allure.Flaky;
 import io.qameta.allure.Muted;
 import io.qameta.allure.Severity;
 import io.qameta.allure.util.ResultsUtils;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
 import java.util.HashSet;
@@ -73,7 +73,7 @@ public class AnnotationUtils {
 		ofNullable(rq.getAttributes()).flatMap(attributes -> attributes.stream()
 				.filter(a -> ResultsUtils.ALLURE_ID_LABEL_NAME.equals(a.getKey()))
 				.findAny()).ifPresent(id -> {
-			if (!ofNullable(source).map(s -> s.getAnnotation(TestCaseId.class)).isPresent()) {
+			if (ofNullable(source).map(s -> s.getAnnotation(TestCaseId.class)).isEmpty()) {
 				rq.setTestCaseId(ofNullable(TestCaseIdUtils.getTestCaseId(
 						id.getValue(),
 						ofNullable(rq.getParameters()).map(params -> params.stream()

@@ -19,11 +19,11 @@ package com.epam.reportportal.allure;
 import com.epam.reportportal.utils.MemoizingSupplier;
 import com.epam.ta.reportportal.ws.model.StartTestItemRQ;
 import com.epam.ta.reportportal.ws.model.attribute.ItemAttributesRQ;
+import jakarta.annotation.Nonnull;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.*;
 import java.util.function.Supplier;
@@ -36,9 +36,7 @@ public class BddUtils {
 
 	private static final Supplier<Map<String, String>> allureProperties = new MemoizingSupplier<>(() -> {
 		Properties properties = new Properties();
-		ofNullable(Thread.currentThread()
-				.getContextClassLoader()
-				.getResourceAsStream("allure.properties")).ifPresent(is -> {
+		ofNullable(Thread.currentThread().getContextClassLoader().getResourceAsStream("allure.properties")).ifPresent(is -> {
 			try {
 				properties.load(is);
 			} catch (IOException e) {
@@ -69,15 +67,11 @@ public class BddUtils {
 		List<Pair<String, String>> links = properties.stream().map(p -> {
 			if (ISSUE_TAG.equals(p.getKey())) {
 				String issue = p.getValue();
-				return ofNullable(getProperties().get(ISSUE_PATTERN_PROPERTY)).map(pattern -> pattern.replace(
-						"{}",
-						issue
-				)).orElse(issue);
+				return ofNullable(getProperties().get(ISSUE_PATTERN_PROPERTY)).map(pattern -> pattern.replace("{}", issue)).orElse(issue);
 			}
 			if (TMS_LINK_TAG.equals(p.getKey())) {
 				String tms = p.getValue();
-				return ofNullable(getProperties().get(TMS_PATTERN_PROPERTY)).map(pattern -> pattern.replace("{}", tms))
-						.orElse(tms);
+				return ofNullable(getProperties().get(TMS_PATTERN_PROPERTY)).map(pattern -> pattern.replace("{}", tms)).orElse(tms);
 			}
 			return null;
 		}).filter(Objects::nonNull).map(l -> Pair.of(l, l)).collect(Collectors.toList());
