@@ -142,7 +142,8 @@ public class MethodNestedStepsTest {
 		ArgumentCaptor<List<MultipartBody.Part>> logCaptor = ArgumentCaptor.forClass(List.class);
 		verify(client, atLeast(1)).log(logCaptor.capture());
 
-		verifyLogged(logCaptor,
+		verifyLogged(
+				logCaptor,
 				nestedSteps.get(0),
 				LogLevel.INFO,
 				StepAspect.STEP_DESCRIPTION + MethodStepDescription.TEST_STEP_DESCRIPTION

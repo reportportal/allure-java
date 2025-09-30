@@ -25,9 +25,9 @@ import com.epam.ta.reportportal.ws.model.attribute.ItemAttributesRQ;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.plugin.event.TestCase;
 import io.reactivex.Maybe;
+import jakarta.annotation.Nonnull;
 import org.apache.commons.lang3.tuple.Pair;
 
-import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -37,7 +37,7 @@ public class AllureAwareReporter {
 
 	private static final char ALLURE_VALUE_DELIMITER = '=';
 
-	private static final Set<String> ATTRIBUTE_REPLACE_SET = Collections.unmodifiableSet(new HashSet<String>() {{
+	private static final Set<String> ATTRIBUTE_REPLACE_SET = Collections.unmodifiableSet(new HashSet<>() {{
 		add("severity");
 		add("issue");
 		add("tmsLink");

@@ -22,18 +22,13 @@ import com.epam.reportportal.service.ReportPortalClient;
 import com.epam.reportportal.util.test.CommonUtils;
 import com.epam.ta.reportportal.ws.model.FinishTestItemRQ;
 import com.epam.ta.reportportal.ws.model.StartTestItemRQ;
-import com.epam.ta.reportportal.ws.model.attribute.ItemAttributesRQ;
-import org.apache.commons.lang3.tuple.Pair;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
-import java.util.List;
-import java.util.Set;
-
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.emptyOrNullString;
+import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.mock;
@@ -46,7 +41,8 @@ public class InlineDescriptionTest extends BaseTest {
 	private final String stepId = CommonUtils.namedId("step_");
 
 	private final ReportPortalClient client = mock(ReportPortalClient.class);
-	private final AllureAwareStepFormat format = new AllureAwareStepFormat(ReportPortal.create(client,
+	private final AllureAwareStepFormat format = new AllureAwareStepFormat(ReportPortal.create(
+			client,
 			standardParameters(),
 			testExecutor()
 	));

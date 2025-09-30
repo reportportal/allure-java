@@ -23,11 +23,11 @@ import io.cucumber.core.gherkin.Feature;
 import io.cucumber.plugin.event.Node;
 import io.cucumber.plugin.event.TestCase;
 import io.reactivex.Maybe;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.net.URI;
-import java.util.Date;
+import java.time.Instant;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -86,7 +86,7 @@ public class AllureAwareStepReporter extends StepReporter {
 	@Override
 	@Nonnull
 	@SuppressWarnings("unused")
-	protected FinishTestItemRQ buildFinishTestItemRequest(@Nonnull Maybe<String> itemId, @Nullable Date finishTime,
+	protected FinishTestItemRQ buildFinishTestItemRequest(@Nonnull Maybe<String> itemId, @Nullable Instant finishTime,
 			@Nullable ItemStatus status) {
 		FinishTestItemRQ rq = super.buildFinishTestItemRequest(itemId, finishTime, status);
 		return processFinishDescription(itemId, rq, DESCRIPTION_TRACKER);

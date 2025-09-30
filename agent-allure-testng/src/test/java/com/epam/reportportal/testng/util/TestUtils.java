@@ -13,6 +13,8 @@ import com.epam.ta.reportportal.ws.model.launch.StartLaunchRS;
 import com.epam.ta.reportportal.ws.model.log.SaveLogRQ;
 import com.fasterxml.jackson.core.type.TypeReference;
 import io.reactivex.Maybe;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import okhttp3.MultipartBody;
 import okio.Buffer;
 import org.apache.commons.lang3.tuple.Pair;
@@ -22,8 +24,6 @@ import org.mockito.stubbing.Answer;
 import org.testng.ITestNGListener;
 import org.testng.TestNG;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.*;
 import java.util.function.Predicate;
@@ -175,8 +175,10 @@ public class TestUtils {
 				})
 				.map(b -> {
 					try {
-						return HttpRequestUtils.MAPPER.readValue(b, new TypeReference<>() {
-						});
+						return HttpRequestUtils.MAPPER.readValue(
+								b, new TypeReference<>() {
+								}
+						);
 					} catch (IOException e) {
 						return Collections.<SaveLogRQ>emptyList();
 					}

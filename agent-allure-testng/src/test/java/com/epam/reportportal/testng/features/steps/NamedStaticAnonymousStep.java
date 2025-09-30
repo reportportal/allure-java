@@ -29,8 +29,10 @@ public class NamedStaticAnonymousStep {
 
 	@Test
 	public void stepTest1() {
-		step(TEST_STEP_NAME, context -> {
-			LOGGER.info(LOG_MESSAGE);
-		});
+		step(
+				TEST_STEP_NAME, context -> {
+					LOGGER.info(LOG_MESSAGE);
+				}
+		);
 	}
 }

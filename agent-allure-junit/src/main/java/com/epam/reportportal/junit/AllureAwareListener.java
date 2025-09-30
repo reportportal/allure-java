@@ -24,15 +24,15 @@ import com.epam.reportportal.service.tree.TestItemTree;
 import com.epam.ta.reportportal.ws.model.FinishTestItemRQ;
 import com.epam.ta.reportportal.ws.model.StartTestItemRQ;
 import com.nordstrom.automation.junit.LifecycleHooks;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.internal.runners.model.ReflectiveCallable;
 import org.junit.runner.Description;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.TestClass;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.Date;
+import java.time.Instant;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -47,7 +47,7 @@ public class AllureAwareListener extends ReportPortalListener {
 	@Override
 	@Nonnull
 	protected StartTestItemRQ buildStartStepRq(@Nonnull final Object runner, @Nullable final Description description,
-			@Nonnull final FrameworkMethod method, @Nonnull final ReflectiveCallable callable, @Nullable final Date startTime) {
+			@Nonnull final FrameworkMethod method, @Nonnull final ReflectiveCallable callable, @Nullable final Instant startTime) {
 		StartTestItemRQ rq = super.buildStartStepRq(runner, description, method, callable, startTime);
 		ItemType itemType = ItemType.valueOf(rq.getType());
 		if (itemType == ItemType.STEP) {
@@ -72,7 +72,7 @@ public class AllureAwareListener extends ReportPortalListener {
 	}
 
 	@Nonnull
-	protected StartTestItemRQ buildStartTestItemRq(@Nonnull final Object runner, @Nullable final Date startTime) {
+	protected StartTestItemRQ buildStartTestItemRq(@Nonnull final Object runner, @Nullable final Instant startTime) {
 		StartTestItemRQ rq = super.buildStartTestItemRq(runner, startTime);
 		TestClass testClass = LifecycleHooks.getTestClassOf(runner);
 		processLabels(rq, testClass.getJavaClass());
@@ -82,7 +82,7 @@ public class AllureAwareListener extends ReportPortalListener {
 
 	@Override
 	@Nonnull
-	protected StartTestItemRQ buildStartSuiteRq(@Nonnull final Object runner, @Nullable final Date startTime) {
+	protected StartTestItemRQ buildStartSuiteRq(@Nonnull final Object runner, @Nullable final Instant startTime) {
 		StartTestItemRQ rq = super.buildStartSuiteRq(runner, startTime);
 		TestClass testClass = LifecycleHooks.getTestClassOf(runner);
 		processLabels(rq, testClass.getJavaClass());
@@ -95,7 +95,7 @@ public class AllureAwareListener extends ReportPortalListener {
 	protected FinishTestItemRQ buildFinishStepRq(@Nonnull final Object runner, @Nullable final FrameworkMethod method,
 			@Nonnull final ReflectiveCallable callable, @Nonnull final ItemStatus status) {
 		FinishTestItemRQ rq = super.buildFinishStepRq(runner, method, callable, status);
-		ofNullable(method).map(m -> getLeaf(runner, m, callable)).map(TestItemTree.TestItemLeaf::getItemId).ifPresent(id->{
+		ofNullable(method).map(m -> getLeaf(runner, m, callable)).map(TestItemTree.TestItemLeaf::getItemId).ifPresent(id -> {
 			ofNullable(RuntimeAspect.retrieveRuntimeDescription(id)).ifPresent(d -> {
 				DESCRIPTION_TRACKER.put(method, d);
 				rq.setDescription(d);
