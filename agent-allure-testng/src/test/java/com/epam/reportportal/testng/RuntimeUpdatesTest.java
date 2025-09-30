@@ -147,7 +147,8 @@ public class RuntimeUpdatesTest {
 		verify(client).finishTestItem(same(stepUuid), finishCaptor.capture());
 
 		FinishTestItemRQ finishItemRequest = finishCaptor.getValue();
-		assertThat(finishItemRequest.getDescription(),
+		assertThat(
+				finishItemRequest.getDescription(),
 				equalTo(TestLinkAddDescription.DESCRIPTION + FormatUtils.MARKDOWN_DELIMITER + FormatUtils.LINK_PREFIX + String.format(
 						FormatUtils.LINK_MARKDOWN,
 						TestLinkAddDescription.LINK_NAME,
@@ -166,7 +167,8 @@ public class RuntimeUpdatesTest {
 		verify(client).finishTestItem(same(stepUuid), finishCaptor.capture());
 
 		FinishTestItemRQ finishItemRequest = finishCaptor.getValue();
-		assertThat(finishItemRequest.getDescription(),
+		assertThat(
+				finishItemRequest.getDescription(),
 				equalTo(FormatUtils.LINK_PREFIX + String.format(
 						FormatUtils.LINK_MARKDOWN,
 						TestLinkAddNoDescription.LINK_NAME,
@@ -185,7 +187,8 @@ public class RuntimeUpdatesTest {
 		verify(client).finishTestItem(same(stepUuid), finishCaptor.capture());
 
 		FinishTestItemRQ finishItemRequest = finishCaptor.getValue();
-		assertThat(finishItemRequest.getDescription(),
+		assertThat(
+				finishItemRequest.getDescription(),
 				equalTo(FormatUtils.LINK_PREFIX + String.format(
 						FormatUtils.LINK_MARKDOWN,
 						TestLinkAddNoName.LINK_URL,

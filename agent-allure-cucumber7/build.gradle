@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 
-sourceCompatibility = JavaVersion.VERSION_11
-targetCompatibility = JavaVersion.VERSION_11
-
 dependencies {
-    api 'com.epam.reportportal:agent-java-cucumber7:5.3.10'
+    api 'com.epam.reportportal:agent-java-cucumber7:5.4.0'
 
     implementation "io.cucumber:cucumber-gherkin:${project.cucumber_version}"
 
     testImplementation "io.cucumber:cucumber-java:${project.cucumber_version}"
     testImplementation "io.cucumber:cucumber-testng:${project.cucumber_version}"
     testImplementation 'org.testng:testng:7.8.0'
-} 
+}

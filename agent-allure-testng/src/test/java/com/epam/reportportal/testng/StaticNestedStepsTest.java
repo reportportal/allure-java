@@ -141,7 +141,8 @@ public class StaticNestedStepsTest {
 		ArgumentCaptor<List<MultipartBody.Part>> logCaptor = ArgumentCaptor.forClass(List.class);
 		verify(client, atLeast(1)).log(logCaptor.capture());
 
-		verifyLogged(logCaptor,
+		verifyLogged(
+				logCaptor,
 				stepUuid,
 				LogLevel.ERROR,
 				"org.opentest4j.AssertionFailedError: " + StaticAnonymousStepFailure.FAILURE_MESSAGE

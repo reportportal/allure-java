@@ -23,6 +23,8 @@ import com.epam.reportportal.service.ReportPortal;
 import com.epam.ta.reportportal.ws.model.FinishTestItemRQ;
 import com.epam.ta.reportportal.ws.model.StartTestItemRQ;
 import io.reactivex.Maybe;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import org.apache.commons.lang3.tuple.Pair;
 import org.testng.ITestContext;
 import org.testng.ITestNGMethod;
@@ -30,8 +32,6 @@ import org.testng.ITestResult;
 import org.testng.internal.ConstructorOrMethod;
 import org.testng.xml.XmlTest;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Optional;

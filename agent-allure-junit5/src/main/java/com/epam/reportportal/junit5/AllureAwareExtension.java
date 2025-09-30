@@ -21,12 +21,13 @@ import com.epam.reportportal.allure.RuntimeAspect;
 import com.epam.reportportal.listeners.ItemStatus;
 import com.epam.ta.reportportal.ws.model.FinishTestItemRQ;
 import com.epam.ta.reportportal.ws.model.StartTestItemRQ;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
-import javax.annotation.Nonnull;
 import java.lang.reflect.Method;
-import java.util.Date;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -54,7 +55,7 @@ public class AllureAwareExtension extends ReportPortalExtension {
 	@Override
 	@Nonnull
 	protected StartTestItemRQ buildStartStepRq(@Nonnull final ExtensionContext context, @Nonnull final List<Object> arguments,
-			@Nonnull final ItemType itemType, @Nonnull final String description, @Nonnull final Date startTime) {
+			@Nonnull final ItemType itemType, @Nullable final String description, @Nullable final Instant startTime) {
 		StartTestItemRQ rq = super.buildStartStepRq(context, arguments, itemType, description, startTime);
 		if (itemType == ItemType.SUITE) {
 			context.getTestClass().ifPresent(c -> {
@@ -77,7 +78,7 @@ public class AllureAwareExtension extends ReportPortalExtension {
 	}
 
 	@Nonnull
-	protected FinishTestItemRQ buildFinishTestItemRq(@Nonnull ExtensionContext context, @Nonnull ItemStatus status) {
+	protected FinishTestItemRQ buildFinishTestItemRq(@Nonnull ExtensionContext context, @Nullable ItemStatus status) {
 		FinishTestItemRQ rq = super.buildFinishTestItemRq(context, status);
 		getItemId(context).ifPresent(itemId -> {
 			ofNullable(RuntimeAspect.retrieveRuntimeDescription(itemId)).ifPresent(d -> {

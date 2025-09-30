@@ -24,7 +24,6 @@ import com.epam.ta.reportportal.ws.model.StartTestItemRQ;
 import com.epam.ta.reportportal.ws.model.attribute.ItemAttributesRQ;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
@@ -46,7 +45,8 @@ public class StoryMetaTest extends BaseTest {
 	private final String stepId = CommonUtils.namedId("step_");
 
 	private final ReportPortalClient client = mock(ReportPortalClient.class);
-	private final AllureAwareStepFormat format = new AllureAwareStepFormat(ReportPortal.create(client,
+	private final AllureAwareStepFormat format = new AllureAwareStepFormat(ReportPortal.create(
+			client,
 			standardParameters(),
 			testExecutor()
 	));
@@ -59,13 +59,13 @@ public class StoryMetaTest extends BaseTest {
 
 	private static final String STORY_NAME = "StoryMetaInfo.story";
 	private static final String STORY_PATH = "stories/" + STORY_NAME;
-	private static final Set<Pair<String, String>> SUITE_ATTRIBUTES = new HashSet<Pair<String, String>>() {{
+	private static final Set<Pair<String, String>> SUITE_ATTRIBUTES = new HashSet<>() {{
 		add(Pair.of("severity", "critical"));
 		add(Pair.of("issue", "IS-1234"));
 		add(Pair.of("tmsLink", "TMS-4321"));
 	}};
 
-	private static final Set<String> SUITE_DESCRIPTION_LINKS = new HashSet<String>() {{
+	private static final Set<String> SUITE_DESCRIPTION_LINKS = new HashSet<>() {{
 		add("https://example.com/issue/IS-1234");
 		add("https://example.com/tms/TMS-4321");
 	}};
@@ -90,6 +90,6 @@ public class StoryMetaTest extends BaseTest {
 		assertThat(startScenario.getAttributes(), empty());
 
 		String description = startSuite.getDescription();
-		SUITE_DESCRIPTION_LINKS.forEach(d->assertThat(description, containsString(d)));
+		SUITE_DESCRIPTION_LINKS.forEach(d -> assertThat(description, containsString(d)));
 	}
 }

@@ -22,8 +22,8 @@ import com.epam.reportportal.utils.MemoizingSupplier;
 import java.util.function.Supplier;
 
 public class AllureAwareListener extends BaseTestNGListener {
-	public static final Supplier<ITestNGService> SERVICE =
-			new MemoizingSupplier<>(() -> new AllureAwareService(ReportPortal.builder().build()));
+	public static final Supplier<ITestNGService> SERVICE = new MemoizingSupplier<>(() -> new AllureAwareService(ReportPortal.builder()
+			.build()));
 
 	public AllureAwareListener() {
 		super(SERVICE.get());

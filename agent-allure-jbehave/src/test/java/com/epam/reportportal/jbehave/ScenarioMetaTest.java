@@ -45,7 +45,8 @@ public class ScenarioMetaTest extends BaseTest {
 	private final String stepId = CommonUtils.namedId("step_");
 
 	private final ReportPortalClient client = mock(ReportPortalClient.class);
-	private final AllureAwareStepFormat format = new AllureAwareStepFormat(ReportPortal.create(client,
+	private final AllureAwareStepFormat format = new AllureAwareStepFormat(ReportPortal.create(
+			client,
 			standardParameters(),
 			testExecutor()
 	));
@@ -58,7 +59,7 @@ public class ScenarioMetaTest extends BaseTest {
 
 	private static final String STORY_NAME = "ScenarioMetaInfo.story";
 	private static final String STORY_PATH = "stories/" + STORY_NAME;
-	private static final Set<Pair<String, String>> STEP_ATTRIBUTES = new HashSet<Pair<String, String>>() {{
+	private static final Set<Pair<String, String>> STEP_ATTRIBUTES = new HashSet<>() {{
 		add(Pair.of("severity", "critical"));
 		add(Pair.of("issue", "IS-1234"));
 		add(Pair.of("tmsLink", "TMS-4321"));

@@ -24,12 +24,12 @@ import com.epam.ta.reportportal.ws.model.FinishTestItemRQ;
 import com.epam.ta.reportportal.ws.model.StartTestItemRQ;
 import com.epam.ta.reportportal.ws.model.issue.Issue;
 import io.reactivex.Maybe;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import org.jbehave.core.model.Scenario;
 import org.jbehave.core.model.Story;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.Date;
+import java.time.Instant;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
@@ -57,13 +57,13 @@ public class AllureAwareScenarioStoryReporter extends ReportPortalScenarioStoryR
 
 	@Override
 	@Nonnull
-	protected StartTestItemRQ buildStartStoryRq(@Nonnull Story story, @Nonnull String codeRef, @Nullable final Date startTime) {
+	protected StartTestItemRQ buildStartStoryRq(@Nonnull Story story, @Nonnull String codeRef, @Nullable final Instant startTime) {
 		return processStartSuiteRq(story, super.buildStartStoryRq(story, codeRef, startTime));
 	}
 
 	@Override
 	@Nonnull
-	protected StartTestItemRQ buildStartScenarioRq(@Nonnull Scenario scenario, @Nonnull String codeRef, @Nullable final Date startTime) {
+	protected StartTestItemRQ buildStartScenarioRq(@Nonnull Scenario scenario, @Nonnull String codeRef, @Nullable final Instant startTime) {
 		return processStartScenarioRq(scenario, super.buildStartScenarioRq(scenario, codeRef, startTime));
 	}
 

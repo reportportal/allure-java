@@ -29,6 +29,8 @@ import com.epam.ta.reportportal.ws.model.launch.StartLaunchRS;
 import com.epam.ta.reportportal.ws.model.log.SaveLogRQ;
 import com.fasterxml.jackson.core.type.TypeReference;
 import io.reactivex.Maybe;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import okhttp3.MultipartBody;
 import okio.Buffer;
 import org.apache.commons.lang3.tuple.Pair;
@@ -48,8 +50,6 @@ import org.jbehave.core.steps.InstanceStepsFactory;
 import org.mockito.ArgumentCaptor;
 import org.mockito.stubbing.Answer;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -104,7 +104,8 @@ public class BaseTest {
 						.withFailureTrace(true)
 						.withFailureTraceCompression(true)));
 
-		final InjectableStepsFactory stepsFactory = new InstanceStepsFactory(embedder.configuration(),
+		final InjectableStepsFactory stepsFactory = new InstanceStepsFactory(
+				embedder.configuration(),
 				steps == null ? Collections.emptyList() : Arrays.asList(steps)
 		);
 		embedder.useStepsFactory(stepsFactory);
@@ -194,7 +195,8 @@ public class BaseTest {
 				Maybe<ItemCreatedRS> myFirst = stepResponses.get(0);
 				Maybe<ItemCreatedRS>[] myOther = stepResponses.subList(1, stepResponses.size()).toArray(new Maybe[0]);
 				when(client.startTestItem(same(testClassUuid), any())).thenReturn(myFirst, myOther);
-				new HashSet<>(test.getValue()).forEach(testMethodUuid -> when(client.finishTestItem(same(testMethodUuid),
+				new HashSet<>(test.getValue()).forEach(testMethodUuid -> when(client.finishTestItem(
+						same(testMethodUuid),
 						any()
 				)).thenReturn(Maybe.just(new OperationCompletionRS())));
 			}
@@ -223,7 +225,8 @@ public class BaseTest {
 			Maybe<ItemCreatedRS>[] other = responses.subList(1, responses.size()).toArray(new Maybe[0]);
 			when(client.startTestItem(eq(k), any())).thenReturn(first, other);
 		});
-		parentNestedPairs.forEach(p -> when(client.finishTestItem(same(p.getValue()),
+		parentNestedPairs.forEach(p -> when(client.finishTestItem(
+				same(p.getValue()),
 				any()
 		)).thenAnswer((Answer<Maybe<OperationCompletionRS>>) invocation -> Maybe.just(new OperationCompletionRS())));
 	}
@@ -255,8 +258,10 @@ public class BaseTest {
 				})
 				.map(b -> {
 					try {
-						return HttpRequestUtils.MAPPER.readValue(b, new TypeReference<List<SaveLogRQ>>() {
-						});
+						return HttpRequestUtils.MAPPER.readValue(
+								b, new TypeReference<>() {
+								}
+						);
 					} catch (IOException e) {
 						return Collections.<SaveLogRQ>emptyList();
 					}
@@ -271,7 +276,8 @@ public class BaseTest {
 
 	public static void verifyLogged(@Nonnull final ArgumentCaptor<List<MultipartBody.Part>> logCaptor, @Nullable final String itemId,
 			@Nonnull final LogLevel level, @Nonnull final String message) {
-		List<SaveLogRQ> expectedErrorList = filterLogs(logCaptor,
+		List<SaveLogRQ> expectedErrorList = filterLogs(
+				logCaptor,
 				l -> level.name().equals(l.getLevel()) && l.getMessage() != null && l.getMessage().contains(message)
 		);
 		assertThat(expectedErrorList, hasSize(1));

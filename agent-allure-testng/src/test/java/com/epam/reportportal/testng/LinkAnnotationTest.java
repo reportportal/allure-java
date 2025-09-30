@@ -39,8 +39,8 @@ import java.util.stream.Stream;
 
 import static com.epam.reportportal.testng.util.TestUtils.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.startsWith;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.*;
@@ -99,7 +99,8 @@ public class LinkAnnotationTest {
 		verify(client).startTestItem(same(testClassUuid), startMethodCapture.capture()); // Start test step
 
 		StartTestItemRQ startRequest = startMethodCapture.getValue();
-		assertThat(startRequest.getDescription(),
+		assertThat(
+				startRequest.getDescription(),
 				equalTo(TestLinkAndDescription.DESCRIPTION + FormatUtils.MARKDOWN_DELIMITER + FormatUtils.LINK_PREFIX + String.format(
 						FormatUtils.LINK_MARKDOWN,
 						TestLinkAndDescription.LINK_NAME,
@@ -124,7 +125,8 @@ public class LinkAnnotationTest {
 				.collect(Collectors.toList());
 		assertThat(startBeforeRequests, hasSize(1));
 		StartTestItemRQ startRequest = startBeforeRequests.get(0);
-		assertThat(startRequest.getDescription(),
+		assertThat(
+				startRequest.getDescription(),
 				equalTo(TestLinkAndDescriptionBefore.DESCRIPTION + FormatUtils.MARKDOWN_DELIMITER + FormatUtils.LINK_PREFIX + String.format(
 						FormatUtils.LINK_MARKDOWN,
 						TestLinkAndDescriptionBefore.LINK_NAME,
