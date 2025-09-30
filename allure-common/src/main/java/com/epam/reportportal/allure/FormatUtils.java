@@ -17,9 +17,9 @@
 package com.epam.reportportal.allure;
 
 import io.qameta.allure.model.Link;
+import jakarta.annotation.Nullable;
 import org.apache.commons.lang3.tuple.Pair;
 
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
@@ -55,7 +55,8 @@ public class FormatUtils {
 
 	@Nullable
 	public static String appendLinks(@Nullable String description, @Nullable Set<Link> links) {
-		return ofNullable(links).map(ll -> appendLinks(description,
+		return ofNullable(links).map(ll -> appendLinks(
+				description,
 				ll.stream().map(l -> Pair.of(l.getName(), l.getUrl())).collect(Collectors.toList())
 		)).orElse(description);
 	}

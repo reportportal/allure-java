@@ -32,8 +32,8 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Objects;
 import java.util.function.Supplier;
 
@@ -98,12 +98,12 @@ public class AttachmentAspect {
 				methodSignature.getName() :
 				processNameTemplate(attachment.value(), getParametersMap(joinPoint));
 		String type = attachment.type();
-		ReportPortal.emitLog(new ReportPortalMessage(byteSource, type, name), LogLevel.UNKNOWN.name(), Calendar.getInstance().getTime());
+		ReportPortal.emitLog(new ReportPortalMessage(byteSource, type, name), LogLevel.UNKNOWN.name(), Instant.now());
 	}
 
 	private static void logByteData(String name, String type, byte[] data) {
 		ByteSource byteSource = ByteSource.wrap(data);
-		ReportPortal.emitLog(new ReportPortalMessage(byteSource, type, name), LogLevel.UNKNOWN.name(), Calendar.getInstance().getTime());
+		ReportPortal.emitLog(new ReportPortalMessage(byteSource, type, name), LogLevel.UNKNOWN.name(), Instant.now());
 	}
 
 	private static InputStream logInputStream(String name, String type, InputStream inputStream) {
