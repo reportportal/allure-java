@@ -47,7 +47,7 @@ public class AllureAwareListener extends ReportPortalSpockListener {
 	@Nonnull
 	protected Maybe<String> startSpec(@Nonnull StartTestItemRQ rq) {
 		Maybe<String> id = super.startSpec(rq);
-		DESCRIPTION_TRACKER.put(id, rq.getDescription());
+		ofNullable(rq.getDescription()).filter(d -> !d.isBlank()).ifPresent(description -> DESCRIPTION_TRACKER.put(id, description));
 		return id;
 	}
 
@@ -65,7 +65,7 @@ public class AllureAwareListener extends ReportPortalSpockListener {
 	@Nonnull
 	protected Maybe<String> startFixture(@Nonnull Maybe<String> parentId, @Nonnull StartTestItemRQ rq) {
 		Maybe<String> id = super.startFixture(parentId, rq);
-		DESCRIPTION_TRACKER.put(id, rq.getDescription());
+		ofNullable(rq.getDescription()).filter(d -> !d.isBlank()).ifPresent(description -> DESCRIPTION_TRACKER.put(id, description));
 		return id;
 	}
 
@@ -84,7 +84,7 @@ public class AllureAwareListener extends ReportPortalSpockListener {
 	@Nonnull
 	protected Maybe<String> startFeature(@Nonnull Maybe<String> parentId, @Nonnull StartTestItemRQ rq) {
 		Maybe<String> id = super.startFeature(parentId, rq);
-		DESCRIPTION_TRACKER.put(id, rq.getDescription());
+		ofNullable(rq.getDescription()).filter(d -> !d.isBlank()).ifPresent(description -> DESCRIPTION_TRACKER.put(id, description));
 		return id;
 	}
 
@@ -107,7 +107,7 @@ public class AllureAwareListener extends ReportPortalSpockListener {
 	@Nonnull
 	protected Maybe<String> startIteration(@Nonnull Maybe<String> parentId, @Nonnull StartTestItemRQ rq) {
 		Maybe<String> id = super.startIteration(parentId, rq);
-		DESCRIPTION_TRACKER.put(id, rq.getDescription());
+		ofNullable(rq.getDescription()).filter(d -> !d.isBlank()).ifPresent(description -> DESCRIPTION_TRACKER.put(id, description));
 		return id;
 	}
 
