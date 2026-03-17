@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+
+## [5.4.1]
 ### Fixed
 - Null descriptions handling, by @HardNorth
 
