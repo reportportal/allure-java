@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+### Changed
+- Agent version updated on [5.6.7](https://github.com/reportportal/agent-java-testng/releases/tag/5.6.7), by @HardNorth
 
 ## [5.4.0]
 ### Changed
