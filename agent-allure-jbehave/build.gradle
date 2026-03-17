@@ -15,7 +15,7 @@
  */
 
 dependencies {
-    api 'com.epam.reportportal:agent-java-jbehave:5.5.0'
+    api 'com.epam.reportportal:agent-java-jbehave:5.5.5'
     implementation ('org.jbehave:jbehave-core:5.2.0') {
         exclude group: 'junit'
         exclude group: 'org.junit.vintage'

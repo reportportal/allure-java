@@ -15,7 +15,7 @@
  */
 
 dependencies {
-    api 'com.epam.reportportal:agent-java-junit5:5.5.2'
+    api 'com.epam.reportportal:agent-java-junit5:5.5.7'
 
     implementation 'org.junit.jupiter:junit-jupiter-api:5.9.1'
 }

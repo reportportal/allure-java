@@ -15,7 +15,7 @@
  */
 
 dependencies {
-    api 'com.epam.reportportal:agent-java-spock:5.4.0'
+    api 'com.epam.reportportal:agent-java-spock:5.4.5'
 
     implementation 'org.spockframework:spock-core:2.3-groovy-2.5'
 
