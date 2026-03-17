@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+
+## [5.4.1]
 ### Changed
 - Agent version updated on [5.5.7](https://github.com/reportportal/agent-java-junit5/releases/tag/5.5.7), by @HardNorth
 
