@@ -14,13 +14,32 @@
  * limitations under the License.
  */
 
+apply plugin: 'groovy'
+
 dependencies {
     api 'com.epam.reportportal:agent-java-spock:5.4.5'
 
     implementation 'org.spockframework:spock-core:2.3-groovy-2.5'
 
     testImplementation 'org.codehaus.groovy:groovy:2.5.14'
+    testImplementation 'com.squareup.okhttp3:okhttp:4.12.0'
 }
+
+test {
+    outputs.upToDateWhen { return false }
+    useJUnitPlatform {
+        includeEngines 'junit-jupiter'
+    }
+    maxParallelForks(5) // it's forks - separate JVMs, should not interfere each other
+    forkEvery(1)
+    doFirst {
+        def weaver = configurations.testRuntimeClasspath.find { it.name.contains("aspectjweaver") }
+        jvmArgs += "-javaagent:$weaver"
+    }
+    environment "AGENT_NO_ANALYTICS", "1"
+    testLogging.exceptionFormat = 'full'
+}
+
 
 jar {
     from("src/main/services") {

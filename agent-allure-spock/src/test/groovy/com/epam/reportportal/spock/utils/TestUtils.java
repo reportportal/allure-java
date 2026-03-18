@@ -1,0 +1,164 @@
+/*
+ * Copyright 2021 EPAM Systems
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.epam.reportportal.spock.utils;
+
+import com.epam.reportportal.listeners.ListenerParameters;
+import com.epam.reportportal.service.LaunchImpl;
+import com.epam.reportportal.service.ReportPortalClient;
+import com.epam.reportportal.util.test.CommonUtils;
+import com.epam.ta.reportportal.ws.model.ApiInfo;
+import com.epam.ta.reportportal.ws.model.BatchSaveOperatingRS;
+import com.epam.ta.reportportal.ws.model.OperationCompletionRS;
+import com.epam.ta.reportportal.ws.model.item.ItemCreatedRS;
+import com.epam.ta.reportportal.ws.model.launch.StartLaunchRS;
+import io.reactivex.Maybe;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
+import org.apache.commons.lang3.tuple.Pair;
+import org.junit.platform.engine.discovery.ClassSelector;
+import org.junit.platform.engine.discovery.DiscoverySelectors;
+import org.junit.platform.launcher.Launcher;
+import org.junit.platform.launcher.LauncherDiscoveryRequest;
+import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
+import org.junit.platform.launcher.core.LauncherFactory;
+import org.junit.platform.launcher.listeners.SummaryGeneratingListener;
+import org.junit.platform.launcher.listeners.TestExecutionSummary;
+import org.mockito.stubbing.Answer;
+
+import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
+
+import static com.epam.reportportal.util.test.CommonUtils.generateUniqueId;
+import static java.util.Optional.ofNullable;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.when;
+
+public class TestUtils {
+	private TestUtils() {
+	}
+
+	public static ExecutorService testExecutor() {
+		return Executors.newSingleThreadExecutor(r -> {
+			Thread t = new Thread(r);
+			t.setDaemon(true);
+			return t;
+		});
+	}
+
+	public static TestExecutionSummary runClasses(final Class<?>... testClass) {
+		final List<ClassSelector> classSelectors = Arrays.stream(testClass)
+				.map(DiscoverySelectors::selectClass)
+				.collect(Collectors.toList());
+
+		final LauncherDiscoveryRequest request = LauncherDiscoveryRequestBuilder.request().selectors(classSelectors).build();
+
+		final Launcher launcher = LauncherFactory.create();
+		final SummaryGeneratingListener listener = new SummaryGeneratingListener();
+
+		launcher.registerTestExecutionListeners(listener);
+		launcher.execute(request);
+
+		return listener.getSummary();
+	}
+
+	public static void mockLaunch(@Nonnull final ReportPortalClient client, @Nullable final String launchUuid,
+			@Nonnull final String testClassUuid, @Nonnull final String testMethodUuid) {
+		mockLaunch(client, launchUuid, testClassUuid, Collections.singleton(testMethodUuid));
+	}
+
+	public static void mockLaunch(@Nonnull final ReportPortalClient client, @Nullable final String launchUuid,
+			@Nonnull final String testClassUuid, @Nonnull final Collection<String> testMethodUuidList) {
+		mockLaunch(client, launchUuid, Collections.singletonList(Pair.of(testClassUuid, testMethodUuidList)));
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <T extends Collection<String>> void mockLaunch(@Nonnull final ReportPortalClient client,
+			@Nullable final String launchUuid, @Nonnull final Collection<Pair<String, T>> testSteps) {
+		String launch = ofNullable(launchUuid).orElse(CommonUtils.namedId("launch_"));
+		when(client.startLaunch(any())).thenReturn(Maybe.just(new StartLaunchRS(launch, 1L)));
+		when(client.getApiInfo()).thenAnswer(invocation -> {
+			ApiInfo apiInfo = new ApiInfo();
+			ApiInfo.Build build = new ApiInfo.Build();
+			build.setVersion(LaunchImpl.MICROSECONDS_MIN_VERSION);
+			apiInfo.setBuild(build);
+			return Maybe.just(apiInfo);
+		});
+
+		List<Maybe<ItemCreatedRS>> testResponses = testSteps.stream()
+				.map(Pair::getKey)
+				.map(uuid -> Maybe.just(new ItemCreatedRS(uuid, uuid)))
+				.collect(Collectors.toList());
+
+		Maybe<ItemCreatedRS> first = testResponses.get(0);
+		Maybe<ItemCreatedRS>[] other = testResponses.subList(1, testResponses.size()).toArray(new Maybe[0]);
+		when(client.startTestItem(any())).thenReturn(first, other);
+
+		testSteps.forEach(test -> {
+			String testClassUuid = test.getKey();
+			List<Maybe<ItemCreatedRS>> stepResponses = test.getValue()
+					.stream()
+					.map(uuid -> Maybe.just(new ItemCreatedRS(uuid, uuid)))
+					.collect(Collectors.toList());
+
+			Maybe<ItemCreatedRS> myFirst = stepResponses.get(0);
+			Maybe<ItemCreatedRS>[] myOther = stepResponses.subList(1, stepResponses.size()).toArray(new Maybe[0]);
+			when(client.startTestItem(same(testClassUuid), any())).thenReturn(myFirst, myOther);
+			new HashSet<>(test.getValue()).forEach(testMethodUuid -> when(client.finishTestItem(same(testMethodUuid), any())).thenReturn(
+					Maybe.just(new OperationCompletionRS())));
+			when(client.finishTestItem(same(testClassUuid), any())).thenReturn(Maybe.just(new OperationCompletionRS()));
+		});
+		when(client.finishLaunch(eq(launch), any())).thenReturn(Maybe.just(new OperationCompletionRS()));
+	}
+
+	@SuppressWarnings("unchecked")
+	public static void mockBatchLogging(final ReportPortalClient client) {
+		when(client.log(any(List.class))).thenReturn(Maybe.just(new BatchSaveOperatingRS()));
+	}
+
+	@SuppressWarnings("unchecked")
+	public static void mockNestedSteps(final ReportPortalClient client, final List<Pair<String, String>> parentNestedPairs) {
+		Map<String, List<String>> responseOrders = parentNestedPairs.stream()
+				.collect(Collectors.groupingBy(Pair::getKey, Collectors.mapping(Pair::getValue, Collectors.toList())));
+		responseOrders.forEach((k, v) -> {
+			List<Maybe<ItemCreatedRS>> responses = v.stream()
+					.map(uuid -> Maybe.just(new ItemCreatedRS(uuid, uuid)))
+					.collect(Collectors.toList());
+
+			Maybe<ItemCreatedRS> first = responses.get(0);
+			Maybe<ItemCreatedRS>[] other = responses.subList(1, responses.size()).toArray(new Maybe[0]);
+			when(client.startTestItem(eq(k), any())).thenReturn(first, other);
+		});
+		parentNestedPairs.forEach(p -> when(client.finishTestItem(
+				same(p.getValue()),
+				any()
+		)).thenAnswer((Answer<Maybe<OperationCompletionRS>>) invocation -> Maybe.just(new OperationCompletionRS())));
+	}
+
+	public static ListenerParameters standardParameters() {
+		ListenerParameters result = new ListenerParameters();
+		result.setClientJoin(false);
+		result.setBatchLogsSize(1);
+		result.setLaunchName("My-test-launch" + generateUniqueId());
+		result.setProjectName("test-project");
+		result.setEnable(true);
+		result.setCallbackReportingEnabled(true);
+		result.setBaseUrl("http://localhost:8080");
+		return result;
+	}
+}
