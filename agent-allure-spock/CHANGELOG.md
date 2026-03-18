@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [5.4.2]
+
 ## [5.4.1]
 ### Changed
 - Agent version updated on [5.4.5](https://github.com/reportportal/agent-java-spock/releases/tag/5.4.5), by @HardNorth
