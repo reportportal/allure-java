@@ -115,7 +115,8 @@ public class AllureAwareListener extends ReportPortalSpockListener {
 	@Nonnull
 	protected StartTestItemRQ buildIterationItemRq(@Nonnull IterationInfo iteration) {
 		StartTestItemRQ rq = super.buildIterationItemRq(iteration);
-		AnnotatedElement m = iteration.getReflection();
+		MethodInfo featureMethodInfo = iteration.getFeature().getFeatureMethod();
+		AnnotatedElement m = featureMethodInfo.getReflection();
 		processLabels(rq, m);
 		processAllureId(rq, m);
 		processLinks(rq, m);
