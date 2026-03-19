@@ -84,10 +84,11 @@ public class AnnotationUtils {
 		});
 	}
 
-	public static void processDescription(@Nonnull StartTestItemRQ rq, @Nonnull ClassLoader classLoader, @Nullable Method source) {
+	public static void processDescription(@Nonnull StartTestItemRQ rq, @Nonnull ClassLoader classLoader,
+			@Nullable AnnotatedElement source) {
 		ofNullable(source).map(s -> s.getAnnotation(Description.class)).flatMap(annotation -> {
 			if (annotation.useJavaDoc() || StringUtils.isBlank(annotation.value())) {
-				return ResultsUtils.getJavadocDescription(classLoader, source);
+				return source instanceof Method ? ResultsUtils.getJavadocDescription(classLoader, (Method) source) : Optional.empty();
 			} else {
 				return Optional.of(annotation.value());
 			}
@@ -98,10 +99,11 @@ public class AnnotationUtils {
 		}).orElseGet(StringBuilder::new).append(description).toString()).ifPresent(rq::setDescription);
 	}
 
-	public static void processPriority(@Nonnull StartTestItemRQ rq, @Nullable Method source) {
+	public static void processPriority(@Nonnull StartTestItemRQ rq, @Nullable AnnotatedElement source) {
 		ofNullable(source).ifPresent(s -> {
-			Severity annotation = ofNullable(s.getAnnotation(Severity.class)).orElseGet(() -> source.getDeclaringClass()
-					.getAnnotation(Severity.class));
+			Severity annotation = ofNullable(s.getAnnotation(Severity.class)).orElseGet(() -> s instanceof Method ?
+					((Method) s).getDeclaringClass().getAnnotation(Severity.class) :
+					null);
 			if (annotation != null) {
 				// Allure don't know the difference between priority and severity (－‸ლ)
 				ItemAttributesRQ attribute = new ItemAttributesRQ("priority", annotation.value().value());
@@ -111,10 +113,11 @@ public class AnnotationUtils {
 		});
 	}
 
-	public static void processFlaky(@Nonnull StartTestItemRQ rq, @Nullable Method source) {
+	public static void processFlaky(@Nonnull StartTestItemRQ rq, @Nullable AnnotatedElement source) {
 		ofNullable(source).ifPresent(s -> {
-			Flaky annotation = ofNullable(s.getAnnotation(Flaky.class)).orElseGet(() -> source.getDeclaringClass()
-					.getAnnotation(Flaky.class));
+			Flaky annotation = ofNullable(s.getAnnotation(Flaky.class)).orElseGet(() -> s instanceof Method ?
+					((Method) s).getDeclaringClass().getAnnotation(Flaky.class) :
+					null);
 			if (annotation != null) {
 				ItemAttributesRQ attribute = new ItemAttributesRQ(Flaky.class.getSimpleName().toLowerCase(Locale.ROOT));
 				Set<ItemAttributesRQ> attributes = retrieveAttributes(rq);
@@ -123,10 +126,11 @@ public class AnnotationUtils {
 		});
 	}
 
-	public static void processMuted(@Nonnull StartTestItemRQ rq, @Nullable Method source) {
+	public static void processMuted(@Nonnull StartTestItemRQ rq, @Nullable AnnotatedElement source) {
 		ofNullable(source).ifPresent(s -> {
-			Muted annotation = ofNullable(s.getAnnotation(Muted.class)).orElseGet(() -> source.getDeclaringClass()
-					.getAnnotation(Muted.class));
+			Muted annotation = ofNullable(s.getAnnotation(Muted.class)).orElseGet(() -> s instanceof Method ?
+					((Method) s).getDeclaringClass().getAnnotation(Muted.class) :
+					null);
 			if (annotation != null) {
 				rq.setHasStats(false);
 			}

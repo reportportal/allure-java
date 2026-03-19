@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+### Changed
+- Methods in `AnnotationUtils` class became more generic, by @HardNorth
 
 ## [5.4.1]
 ### Changed

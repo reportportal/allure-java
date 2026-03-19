@@ -3,6 +3,8 @@
 ## [Unreleased]
 
 ## [5.4.2]
+### Fixed
+- NullPointerException on iteration start, by @HardNorth
 
 ## [5.4.1]
 ### Changed
