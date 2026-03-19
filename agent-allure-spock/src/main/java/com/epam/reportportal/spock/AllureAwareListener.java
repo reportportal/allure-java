@@ -88,18 +88,22 @@ public class AllureAwareListener extends ReportPortalSpockListener {
 		return id;
 	}
 
+	private static void processAll(@Nonnull StartTestItemRQ rq, @Nullable AnnotatedElement method) {
+		processLabels(rq, method);
+		processAllureId(rq, method);
+		processDescription(rq, Thread.currentThread().getContextClassLoader(), method);
+		processLinks(rq, method);
+		processPriority(rq, method);
+		processFlaky(rq, method);
+		processMuted(rq, method);
+	}
+
 	@Override
 	@Nonnull
 	protected StartTestItemRQ buildFeatureItemRq(@Nonnull FeatureInfo featureInfo) {
 		StartTestItemRQ rq = super.buildFeatureItemRq(featureInfo);
-		Method m = featureInfo.getFeatureMethod().getReflection();
-		processLabels(rq, m);
-		processAllureId(rq, m);
-		processDescription(rq, Thread.currentThread().getContextClassLoader(), m);
-		processLinks(rq, m);
-		processPriority(rq, m);
-		processFlaky(rq, m);
-		processMuted(rq, m);
+		Method method = featureInfo.getFeatureMethod().getReflection();
+		processAll(rq, method);
 		return rq;
 	}
 
@@ -116,10 +120,8 @@ public class AllureAwareListener extends ReportPortalSpockListener {
 	protected StartTestItemRQ buildIterationItemRq(@Nonnull IterationInfo iteration) {
 		StartTestItemRQ rq = super.buildIterationItemRq(iteration);
 		MethodInfo featureMethodInfo = iteration.getFeature().getFeatureMethod();
-		AnnotatedElement m = featureMethodInfo.getReflection();
-		processLabels(rq, m);
-		processAllureId(rq, m);
-		processLinks(rq, m);
+		AnnotatedElement method = featureMethodInfo.getReflection();
+		processAll(rq, method);
 		return rq;
 	}
 
