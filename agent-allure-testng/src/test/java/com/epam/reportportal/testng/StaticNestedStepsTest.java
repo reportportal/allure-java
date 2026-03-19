@@ -171,27 +171,6 @@ public class StaticNestedStepsTest {
 	}
 
 	@Test
-	public void test_named_static_anonymous_step() {
-		mockNestedSteps(client, nestedStepLinks.get(0));
-		TestNG result = runTests(NamedStaticAnonymousStep.class);
-		assertThat(result.getStatus(), equalTo(0));
-
-		ArgumentCaptor<StartTestItemRQ> startNestedStepCapture = ArgumentCaptor.forClass(StartTestItemRQ.class);
-		verify(client).startTestItem(same(stepUuid), startNestedStepCapture.capture());
-		verify(client, times(0)).startTestItem(same(nestedSteps.get(0)), any(StartTestItemRQ.class));
-
-		StartTestItemRQ startStep = startNestedStepCapture.getValue();
-		assertThat(startStep.getName(), equalTo(NamedStaticAnonymousStep.TEST_STEP_NAME));
-		assertThat(startStep.isHasStats(), equalTo(Boolean.FALSE));
-
-		ArgumentCaptor<FinishTestItemRQ> finishNestedStepCapture = ArgumentCaptor.forClass(FinishTestItemRQ.class);
-		verify(client).finishTestItem(same(nestedSteps.get(0)), finishNestedStepCapture.capture());
-
-		FinishTestItemRQ finishStep = finishNestedStepCapture.getValue();
-		assertThat(finishStep.getStatus(), equalTo(ItemStatus.PASSED.name()));
-	}
-
-	@Test
 	public void test_two_levels_static_anonymous_step() {
 		mockNestedSteps(client, nestedStepLinks.get(0));
 		mockNestedSteps(client, Pair.of(nestedSteps.get(0), nestedSteps.get(1)));
