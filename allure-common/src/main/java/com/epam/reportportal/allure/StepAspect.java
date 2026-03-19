@@ -145,8 +145,8 @@ public class StepAspect {
 					ofNullable(Launch.currentLaunch()).ifPresent(l -> l.getStepReporter().startNestedStep(rq));
 					return;
 				}
-				if (args[1] instanceof Allure.ThrowableRunnable || args[1] instanceof Allure.ThrowableRunnableVoid
-						|| args[1] instanceof Allure.ThrowableContextRunnableVoid || args[1] instanceof Allure.ThrowableContextRunnable) {
+				if (args[1] instanceof Allure.ThrowableRunnable || args[1] instanceof Allure.ThrowableContextRunnableVoid
+						|| args[1] instanceof Allure.ThrowableContextRunnable) {
 					StartTestItemRQ rq = com.epam.reportportal.service.step.StepRequestUtils.buildStartStepRequest(
 							args[0].toString(),
 							null,

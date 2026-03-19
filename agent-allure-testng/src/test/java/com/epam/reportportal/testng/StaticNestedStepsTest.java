@@ -150,9 +150,9 @@ public class StaticNestedStepsTest {
 	}
 
 	@Test
-	public void test_named_static_anonymous_step() {
+	public void test_named_static_anonymous_step_context() {
 		mockNestedSteps(client, nestedStepLinks.get(0));
-		TestNG result = runTests(NamedStaticAnonymousStep.class);
+		TestNG result = runTests(NamedStaticAnonymousStepContext.class);
 		assertThat(result.getStatus(), equalTo(0));
 
 		ArgumentCaptor<StartTestItemRQ> startNestedStepCapture = ArgumentCaptor.forClass(StartTestItemRQ.class);
@@ -160,7 +160,7 @@ public class StaticNestedStepsTest {
 		verify(client, times(0)).startTestItem(same(nestedSteps.get(0)), any(StartTestItemRQ.class));
 
 		StartTestItemRQ startStep = startNestedStepCapture.getValue();
-		assertThat(startStep.getName(), equalTo(NamedStaticAnonymousStep.TEST_STEP_NAME));
+		assertThat(startStep.getName(), equalTo(NamedStaticAnonymousStepContext.TEST_STEP_NAME));
 		assertThat(startStep.isHasStats(), equalTo(Boolean.FALSE));
 
 		ArgumentCaptor<FinishTestItemRQ> finishNestedStepCapture = ArgumentCaptor.forClass(FinishTestItemRQ.class);

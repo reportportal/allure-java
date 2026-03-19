@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+### Fixed
+- Double step reporting for lambda case with name, by @HardNorth
 
 ## [5.4.2]
 ### Changed

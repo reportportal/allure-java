@@ -22,9 +22,9 @@ import org.testng.annotations.Test;
 
 import static io.qameta.allure.Allure.step;
 
-public class NamedStaticAnonymousStep {
-	private static final Logger LOGGER = LoggerFactory.getLogger(NamedStaticAnonymousStep.class);
-	public static final String TEST_STEP_NAME = NamedStaticAnonymousStep.class.getSimpleName() + " test step";
+public class NamedStaticAnonymousStepContext {
+	private static final Logger LOGGER = LoggerFactory.getLogger(NamedStaticAnonymousStepContext.class);
+	public static final String TEST_STEP_NAME = NamedStaticAnonymousStepContext.class.getSimpleName() + " test step";
 	public static final String LOG_MESSAGE = TEST_STEP_NAME;
 
 	@Test
