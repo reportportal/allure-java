@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+### Changed
+- Process more annotations on Iteration level, by @HardNorth
 
 ## [5.4.2]
 ### Fixed
