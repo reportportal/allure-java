@@ -48,7 +48,7 @@ configure(allprojects - project('allure-common')) {
     compileTestJava.options.encoding = 'UTF-8'
 
     dependencies {
-        implementation 'com.epam.reportportal:allure-common:5.4.2'
+        implementation 'com.epam.reportportal:allure-common:5.4.3'
         implementation 'org.apache.commons:commons-lang3:3.18.0'
 
         testImplementation ("io.qameta.allure:allure-java-commons:${allure_version}") {
