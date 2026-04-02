@@ -15,7 +15,7 @@
  */
 
 dependencies {
-    api 'com.epam.reportportal:agent-java-cucumber6:5.5.5'
+    api 'com.epam.reportportal:agent-java-cucumber6:5.5.6'
 
     implementation "io.cucumber:cucumber-gherkin:${project.cucumber_version}"
 

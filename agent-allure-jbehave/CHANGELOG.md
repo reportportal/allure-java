@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+### Changed
+- Agent version updated on [5.5.6](https://github.com/reportportal/agent-java-jbehave/releases/tag/5.5.6), by @HardNorth
 
 ## [5.4.1]
 ### Changed
